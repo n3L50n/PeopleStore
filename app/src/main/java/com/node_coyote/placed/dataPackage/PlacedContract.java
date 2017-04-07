@@ -38,7 +38,7 @@ public final class PlacedContract  {
         /** content uri to access inventory data in the provider **/
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_INVENTORY);
 
-        
+
 
     }
 }
