@@ -4,6 +4,7 @@ package com.node_coyote.placed.dataPackage;
  * Created by node_coyote on 4/7/17.
  */
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -40,6 +41,16 @@ public final class PlacedContract {
          * content uri to access inventory data in the provider
          **/
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_INVENTORY);
+
+        /**
+         * MIME type for a list of items {@link #CONTENT_URI}
+         */
+        public static final String CONTENT_LIST_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INVENTORY;
+
+        /**
+         * MIME type for a single item {@link #CONTENT_URI}
+         */
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INVENTORY;
 
         /**
          * name of database table for inventory items

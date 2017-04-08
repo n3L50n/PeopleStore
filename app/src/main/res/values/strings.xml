@@ -4,4 +4,7 @@
     <string name="empty_text_title">You haven\'t added any items!</string>
     <string name="empty_text_subtitle">Use the button to get some of your inventory items Placed!</string>
 
+    <string name="item_detail_activity_add_item">Add a new item</string>
+    <string name="item_detail_activity_edit_item">Edit item</string>
+
 </resources>

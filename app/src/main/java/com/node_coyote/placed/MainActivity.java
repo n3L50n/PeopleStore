@@ -1,15 +1,20 @@
 package com.node_coyote.placed;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
 
@@ -34,9 +39,36 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(intent);
             }
         });
+
+        // Find list view to populate with data
+        ListView itemListView = (ListView) findViewById(R.id.list);
+
+        // Show empty view when there aren't any inventory items
+        View emptyView = findViewById(R.id.empty_view);
+        itemListView.setEmptyView(emptyView);
+
+        mCursorAdapter = new PlacedCursorAdapter(this, null);
+        itemListView.setAdapter(mCursorAdapter);
+
+        itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, ItemDetailActivity.class);
+
+                Uri currentItemUri = ContentUris.withAppendedId(PlacedEntry.CONTENT_URI, id);
+
+                intent.setData(currentItemUri);
+
+                startActivity(intent);
+            }
+        });
+
+        getLoaderManager().initLoader(ITEM_LOADER, null, this);
     }
 
-    
+    private void insertItem(){
+        ContentValues values = new ContentValues();
+    }
 
     /** Be careful with this one. It deletes all the rows in the database. **/
     private void deleteAllItems(){
