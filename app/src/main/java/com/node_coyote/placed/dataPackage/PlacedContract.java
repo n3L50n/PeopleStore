@@ -53,7 +53,22 @@ public final class PlacedContract {
         public static final String _ID = BaseColumns._ID;
 
         /**
-         * 
+         * Type: TEXT
+         * The name of the product
          */
+        public static final String COLUMN_PRODUCT_NAME = "name";
+
+        /**
+         * Type: INTEGER
+         * The current quantity of the product
+         */
+        public static final String COLUMN_PRODUCT_QUANTITY = "quantity";
+
+        /**
+         * Type: REAL
+         * The current price of the product
+         */
+        public static final String COLUMN_PRODUCT_PRICE = "price";
+
     }
 }
