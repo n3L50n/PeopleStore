@@ -10,13 +10,14 @@ import android.provider.BaseColumns;
 /**
  * Contract for the inventory tracking app Placed
  */
-public final class PlacedContract  {
+public final class PlacedContract {
 
     // Empty constructor. Don't instantiate the contract class
-    public PlacedContract(){}
+    public PlacedContract() {
+    }
 
     /**
-     *  Content Authority for content provider
+     * Content Authority for content provider
      */
     public static final String CONTENT_AUTHORITY = "com.node_coyote.placed";
 
@@ -35,10 +36,24 @@ public final class PlacedContract  {
      */
     public static final class PlacedEntry implements BaseColumns {
 
-        /** content uri to access inventory data in the provider **/
+        /**
+         * content uri to access inventory data in the provider
+         **/
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_INVENTORY);
 
+        /**
+         * name of database table for inventory items
+         **/
+        public static final String TABLE_NAME = "inventory";
 
+        /**
+         * Type: INTEGER
+         * Unique identifier for an item (row) in the database
+         */
+        public static final String _ID = BaseColumns._ID;
 
+        /**
+         * 
+         */
     }
 }
