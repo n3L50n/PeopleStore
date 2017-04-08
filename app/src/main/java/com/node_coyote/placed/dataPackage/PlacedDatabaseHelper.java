@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
+
 /**
  * Created by node_coyote on 4/7/17.
  */
@@ -28,7 +30,11 @@ public class PlacedDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // A String holding a SQL statement to create the inventory table
-        String SQL_CREATE_INVENTORY_TABLE  = "CREATE TABLE "  ;
+        String SQL_CREATE_INVENTORY_TABLE  = "CREATE TABLE " + PlacedEntry.TABLE_NAME + " ("
+                + PlacedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + PlacedEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, "
+                + PlacedEntry.COLUMN_PRODUCT_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
+                + PlacedEntry.COLUMN_PRODUCT_PRICE + " REAL NOT NULL DEFAULT 0.00);";
 
         db.execSQL(SQL_CREATE_INVENTORY_TABLE);
 
