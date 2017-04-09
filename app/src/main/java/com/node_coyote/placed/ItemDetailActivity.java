@@ -1,6 +1,8 @@
 package com.node_coyote.placed;
 
 import android.app.LoaderManager;
+import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
@@ -9,9 +11,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
 
 /**
  * Created by node_coyote on 4/8/17.
@@ -69,14 +75,98 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mPriceEditText.setOnTouchListener(mOnTouchListener);
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+    /**
+     * Get user input from editor and save item to database
+     */
+    private void saveItem() {
+        // Read from input fields then trip empty garbage
+        String nameString = mNameEditText.getText().toString().trim();
+        String quantityString = mQuantityEditText.getText().toString().trim();
+        String priceString = mPriceEditText.getText().toString().trim();
+
+        // Check if this is a new item and if all fields are blank
+        if (mCurrentItmeUri == null &&
+                TextUtils.isEmpty(nameString) &&
+                TextUtils.isEmpty(quantityString) &&
+                TextUtils.isEmpty(priceString)){
+            // Jump out early. No need to run any more operations
+            return;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(PlacedEntry.COLUMN_PRODUCT_NAME, nameString);
+
+        int quantity = 0;
+        if (!TextUtils.isEmpty(quantityString)){
+            quantity = Integer.parseInt(quantityString);
+        }
+        values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+        values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, priceString);
+
+        if (mCurrentItmeUri == null) {
+            Uri newUri = getContentResolver().insert(PlacedEntry.CONTENT_URI, values);
+
+            // Let's show a toast of whether or not the save was successful
+            if (newUri == null){
+                // If the new uri is empty, the save didn't happen
+                Toast.makeText(this, getString(R.string.save_item_failed), Toast.LENGTH_SHORT).show();
+            } else {
+                // If the a new uri is returned, the save most likely happened.
+                Toast.makeText(this, getString(R.string.save_item_winning), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            // Or this item exists. so we should update the uri
+            int rowsAffected = getContentResolver().update(mCurrentItmeUri, values, null, null);
+
+            // If this update was successful or not, let's show a toast
+            if (rowsAffected == 0){
+                Toast.makeText(this, getString(R.string.update_item_failed), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.update_item_winning), Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
+        String[] projection = {
+                PlacedEntry._ID,
+                PlacedEntry.COLUMN_PRODUCT_NAME,
+                PlacedEntry.COLUMN_PRODUCT_QUANTITY,
+                PlacedEntry.COLUMN_PRODUCT_PRICE
+        };
+
+        return new CursorLoader(this,
+                mCurrentItmeUri,
+                projection,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // Let's not do this if we have an empty cursor or less than 1 row
+        if (cursor == null && cursor.getCount() < 1){
+            return;
+        }
+
+        if (cursor.moveToFirst()){
+            // Find columns with item attributes
+            int nameColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_NAME);
+            int quantityColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_QUANTITY);
+            int priceColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_PRICE);
+
+            // Get the values from the cursor
+            String name = cursor.getString(nameColumnIndex);
+            int quantity = cursor.getInt(quantityColumnIndex);
+
+            // Update UI
+            mNameEditText.setText(name);
+            mQuantityEditText.setText(quantity);
+        }
     }
 
     @Override
@@ -98,5 +188,25 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Let's check if anything has changed. If not, go ahead and go back
+        if (!mItemHasChanged) {
+            super.onBackPressed();
+            return;
+        }
+
+        // If so, let's pop up a dialog
+        DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
+
+        // Show an unsaved changes dialog
+        showUnsavedChangesDialog(discardButtonClickListener);
     }
 }

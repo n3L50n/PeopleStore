@@ -7,4 +7,13 @@
     <string name="item_detail_activity_add_item">Add a new item</string>
     <string name="item_detail_activity_edit_item">Edit item</string>
 
+    <string name="unsaved_changes_dialog">You have some unsaved changes.\nWhat is your plan?</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep Editing</string>
+
+    <string name="save_item_winning">Item added!</string>
+    <string name="save_item_failed">Item add failed.</string>
+    <string name="update_item_winning">Item updated!</string>
+    <string name="update_item_failed">Item update failed.</string>
+
 </resources>
