@@ -21,28 +21,36 @@
             android:id="@+id/empty_inventory_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_centerHorizontal="true" />
 
         <TextView
+            android:layout_below="@+id/empty_inventory_image"
             android:id="@+id/empty_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/empty_title_color"
             android:text="@string/empty_text_title" />
 
         <TextView
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:layout_below="@+id/empty_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:textColor="@color/empty_subtitle_color"
+            android:layout_centerHorizontal="true"
             android:text="@string/empty_text_subtitle" />
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-         />
+        android:src="@drawable/ic_add_item_fab" />
 
 </RelativeLayout>

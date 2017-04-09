@@ -2,7 +2,7 @@
     <string name="app_name">Placed</string>
 
     <string name="empty_text_title">You haven\'t added any items!</string>
-    <string name="empty_text_subtitle">Use the button to get some of your inventory items Placed!</string>
+    <string name="empty_text_subtitle">Use the button to load up the Placed inventory!</string>
 
     <string name="item_detail_activity_add_item">Add a new item</string>
     <string name="item_detail_activity_edit_item">Edit item</string>
@@ -11,9 +11,19 @@
     <string name="discard">Discard</string>
     <string name="keep_editing">Keep Editing</string>
 
+    <string name="save_button_text">Save Item</string>
+    <string name="delete_button_text">Delete Item</string>
+
     <string name="save_item_winning">Item added!</string>
     <string name="save_item_failed">Item add failed.</string>
     <string name="update_item_winning">Item updated!</string>
     <string name="update_item_failed">Item update failed.</string>
+
+    <string name="enter_product_name_hint">Enter product name</string>
+    <string name="product_name_tool_text">Product Name</string>
+    <string name="product_quantity_tool_text">42</string>
+    <string name="enter_product_quantity_hint">Enter quantity</string>
+    <string name="enter_product_price_hint">Enter a price</string>
+    <string name="product_price_tool_text">$42.00</string>
 
 </resources>

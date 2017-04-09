@@ -1,21 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <EditText
+        android:layout_gravity="center_horizontal"
         android:id="@+id/edit_product_name_text_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_product_name_hint"
+        tools:text="@string/product_name_tool_text" />
 
     <EditText
+        android:layout_gravity="center_horizontal"
         android:id="@+id/edit_product_quantity_text_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_product_quantity_hint"
+        android:inputType="number"
+        tools:text="@string/product_quantity_tool_text" />
 
     <EditText
+        android:layout_gravity="center_horizontal"
         android:id="@+id/edit_product_price_text_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_product_price_hint"
+        android:inputType="numberDecimal"
+        tools:text="@string/product_price_tool_text" />
+
+    <Button
+        android:layout_gravity="center_horizontal"
+        android:background="@color/transparent"
+        android:id="@+id/save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save_button_text" />
+
+    <Button
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/delete_button_text"
+        android:background="@color/transparent"
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_button_text" />
 
 </LinearLayout>
