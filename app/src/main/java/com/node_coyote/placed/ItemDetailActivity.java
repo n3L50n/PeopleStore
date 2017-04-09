@@ -94,6 +94,14 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 Log.v("Clicked", "Fore real");
             }
         });
+
+        Button deleteButton = (Button) findViewById(R.id.delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteConfirmationDialog();
+            }
+        });
     }
 
     /**
@@ -254,5 +262,42 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             startActivity(Intent.createChooser(intent, "Send email"));
         }
 
+    }
+
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_message);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteItem();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null){
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void deleteItem(){
+        if (mCurrentItemUri != null){
+            int deletedRows = getContentResolver().delete(mCurrentItemUri, null, null);
+
+            if (deletedRows == 0){
+                Toast.makeText(this, getString(R.string.delete_item_failed), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.delete_item_winning), Toast.LENGTH_LONG).show();
+            }
+        }
+
+        // Close Activity
+        finish();
     }
 }

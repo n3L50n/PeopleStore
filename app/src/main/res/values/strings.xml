@@ -11,6 +11,10 @@
     <string name="discard">Discard</string>
     <string name="keep_editing">Keep Editing</string>
 
+    <string name="delete_dialog_message">Are you sure you want to delete this item?</string>
+    <string name="delete">Delete Item</string>
+    <string name="cancel">Keep Item</string>
+
     <string name="save_button_text">Save Item</string>
     <string name="delete_button_text">Delete Item</string>
     <string name="sale_button_text">Mark 1 Sold</string>
@@ -20,6 +24,8 @@
     <string name="save_item_failed">Item add failed.</string>
     <string name="update_item_winning">Item updated!</string>
     <string name="update_item_failed">Item update failed.</string>
+    <string name="delete_item_winning">Item deleted!</string>
+    <string name="delete_item_failed">Item delete failed.</string>
 
     <string name="enter_product_name_hint">Enter product name</string>
     <string name="product_name_tool_text">Product Name</string>
