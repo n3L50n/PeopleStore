@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
 
+
 /**
  * Created by node_coyote on 4/8/17.
  */
@@ -60,10 +61,13 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         // Are we editing an item or creating a new one?
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
+        Button deleteButton = (Button) findViewById(R.id.delete_button);
 
         // If there isn't an id, let's create a new item
         if (mCurrentItemUri == null){
             setTitle(R.string.item_detail_activity_add_item);
+            deleteButton.setVisibility(View.GONE);
+
         } else {
             setTitle(getString(R.string.item_detail_activity_edit_item));
             getLoaderManager().initLoader(EXISTING_ITEM_LOADER, null, this);
@@ -77,7 +81,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mQuantityEditText.setOnTouchListener(mOnTouchListener);
         mPriceEditText.setOnTouchListener(mOnTouchListener);
 
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
         Button saveButton = (Button) findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +99,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             }
         });
 
-        Button deleteButton = (Button) findViewById(R.id.delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -154,7 +154,33 @@ public class PlacedProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        // Get the writable database
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+
+        // Track number of deleted rows
+        int deletedRows;
+
+        final int match = sMatcher.match(uri);
+        switch (match) {
+            case INVENTORY:
+                // Delete all rows that match selection and selectionArgs
+                deletedRows = database.delete(PlacedEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case INVENTORY_ID:
+                // Delete single row given by id in the uri
+                selection = PlacedEntry._ID + "=?";
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri)) };
+                deletedRows = database.delete(PlacedEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Deletion not supported for " + uri);
+        }
+
+        if (deletedRows != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return deletedRows;
     }
 
     @Override
