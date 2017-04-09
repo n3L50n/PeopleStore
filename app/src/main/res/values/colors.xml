@@ -10,4 +10,8 @@
     <color name="empty_title_color">@android:color/black</color>
     <color name="empty_subtitle_color">@android:color/darker_gray</color>
 
+    <color name="list_item_product_name">@android:color/black</color>
+    <color name="list_item_product_quantity">@android:color/darker_gray</color>
+    <color name="list_item_product_price">@android:color/darker_gray</color>
+
 </resources>

@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/product_name_text"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/product_quantity_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <TextView
+            tool:text="Magic: The Gathering Cards"
+            android:id="@+id/product_name_text"
+            android:textColor="@color/list_item_product_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/product_price_text"
+        <TextView
+            tool:text="42"
+            android:textColor="@color/list_item_product_quantity"
+            android:id="@+id/product_quantity_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            tool:text="$2.99"
+            android:textColor="@color/list_item_product_price"
+            android:id="@+id/product_price_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <Button
+        android:background="@color/transparent"
+        android:text="@string/sale_button_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

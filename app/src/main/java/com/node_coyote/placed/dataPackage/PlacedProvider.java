@@ -133,6 +133,10 @@ public class PlacedProvider extends ContentProvider {
         }
 
         // The price should also not go below 0.00
+        Double price = values.getAsDouble(PlacedEntry.COLUMN_PRODUCT_PRICE);
+        if (price != null && price < 0){
+            throw new IllegalArgumentException("Our prices should not be empty or in the negative");
+        }
 
         // Get writable database
         SQLiteDatabase database = mHelper.getWritableDatabase();
@@ -191,6 +195,13 @@ public class PlacedProvider extends ContentProvider {
             Integer quantity = values.getAsInteger(PlacedEntry.COLUMN_PRODUCT_QUANTITY);
             if (quantity != null && quantity < 0){
                 throw new IllegalArgumentException("Items require a valid quantity");
+            }
+        }
+
+        if (values.containsKey(PlacedEntry.COLUMN_PRODUCT_PRICE)) {
+            Double price = values.getAsDouble(PlacedEntry.COLUMN_PRODUCT_PRICE);
+            if (price != null && price < 0.00){
+                throw new IllegalArgumentException("Items require a valid price");
             }
         }
 

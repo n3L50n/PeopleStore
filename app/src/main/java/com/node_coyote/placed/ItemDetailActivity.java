@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -73,6 +74,15 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mNameEditText.setOnTouchListener(mOnTouchListener);
         mQuantityEditText.setOnTouchListener(mOnTouchListener);
         mPriceEditText.setOnTouchListener(mOnTouchListener);
+
+//        getActionBar().setDisplayHomeAsUpEnabled(true);
+        Button saveButton = (Button) findViewById(R.id.save_button);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveItem();
+            }
+        });
     }
 
     /**
@@ -96,12 +106,19 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         ContentValues values = new ContentValues();
         values.put(PlacedEntry.COLUMN_PRODUCT_NAME, nameString);
 
+        // Let's set quantity to 0 by default, then check if the field is empty
         int quantity = 0;
         if (!TextUtils.isEmpty(quantityString)){
             quantity = Integer.parseInt(quantityString);
         }
         values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
-        values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, priceString);
+
+        // Let's set a price of 0.00, then check if the field is empty
+        double price = 0.00;
+        if (!TextUtils.isEmpty(priceString)){
+            price = Double.parseDouble(priceString);
+        }
+        values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, price);
 
         if (mCurrentItmeUri == null) {
             Uri newUri = getContentResolver().insert(PlacedEntry.CONTENT_URI, values);
@@ -162,15 +179,21 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             // Get the values from the cursor
             String name = cursor.getString(nameColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
+            double price = cursor.getDouble(priceColumnIndex);
 
             // Update UI
             mNameEditText.setText(name);
             mQuantityEditText.setText(quantity);
+            mPriceEditText.setText(String.valueOf(price));
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        // Let's clear the loader if it's invalidated
+        mNameEditText.setText("");
+        mQuantityEditText.setText("");
+        mPriceEditText.setText("");
 
     }
 

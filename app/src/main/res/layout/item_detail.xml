@@ -24,6 +24,7 @@
         tools:text="@string/product_quantity_tool_text" />
 
     <EditText
+        android:textColor="@color/colorPrimary"
         android:layout_gravity="center_horizontal"
         android:id="@+id/edit_product_price_text_view"
         android:layout_width="wrap_content"
@@ -39,6 +40,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save_button_text" />
+
+    <Button
+        android:textColor="@color/colorAccent"
+        android:id="@+id/order_more_button"
+        android:background="@color/transparent"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/order_more_button_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:background="@color/colorPrimaryDark"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/product_image_view"
+        android:layout_width="200dp"
+        android:layout_height="200dp" />
 
     <Button
         android:layout_gravity="center_horizontal"
