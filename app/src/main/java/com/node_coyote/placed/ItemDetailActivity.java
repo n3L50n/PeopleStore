@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +31,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     private static final int EXISTING_ITEM_LOADER = 42;
 
     /** Content uri for an existing item in the inventory **/
-    private Uri mCurrentItmeUri;
+    private Uri mCurrentItemUri;
 
     /** EditText field for product name **/
     private EditText mNameEditText;
@@ -58,13 +59,14 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
         // Are we editing an item or creating a new one?
         Intent intent = getIntent();
-        Uri mCurrentItmeUri = intent.getData();
+        mCurrentItemUri = intent.getData();
 
         // If there isn't an id, let's create a new item
-        if (mCurrentItmeUri == null){
+        if (mCurrentItemUri == null){
             setTitle(R.string.item_detail_activity_add_item);
         } else {
             setTitle(getString(R.string.item_detail_activity_edit_item));
+            getLoaderManager().initLoader(EXISTING_ITEM_LOADER, null, this);
         }
 
         mNameEditText = (EditText) findViewById(R.id.edit_product_name_text_view);
@@ -83,19 +85,28 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 saveItem();
             }
         });
+
+        Button orderMoreButton = (Button) findViewById(R.id.order_more_button);
+        orderMoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                orderMore(new String[]{"number42@gmailcom"}, "I'd like to order more.");
+                Log.v("Clicked", "Fore real");
+            }
+        });
     }
 
     /**
      * Get user input from editor and save item to database
      */
     private void saveItem() {
-        // Read from input fields then trip empty garbage
+        // Read from input fields then trim empty garbage
         String nameString = mNameEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
 
         // Check if this is a new item and if all fields are blank
-        if (mCurrentItmeUri == null &&
+        if (mCurrentItemUri == null &&
                 TextUtils.isEmpty(nameString) &&
                 TextUtils.isEmpty(quantityString) &&
                 TextUtils.isEmpty(priceString)){
@@ -120,7 +131,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         }
         values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, price);
 
-        if (mCurrentItmeUri == null) {
+        if (mCurrentItemUri == null) {
             Uri newUri = getContentResolver().insert(PlacedEntry.CONTENT_URI, values);
 
             // Let's show a toast of whether or not the save was successful
@@ -133,7 +144,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             }
         } else {
             // Or this item exists. so we should update the uri
-            int rowsAffected = getContentResolver().update(mCurrentItmeUri, values, null, null);
+            int rowsAffected = getContentResolver().update(mCurrentItemUri, values, null, null);
 
             // If this update was successful or not, let's show a toast
             if (rowsAffected == 0){
@@ -156,7 +167,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         };
 
         return new CursorLoader(this,
-                mCurrentItmeUri,
+                mCurrentItemUri,
                 projection,
                 null,
                 null,
@@ -183,7 +194,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
             // Update UI
             mNameEditText.setText(name);
-            mQuantityEditText.setText(quantity);
+            mQuantityEditText.setText(String.valueOf(quantity));
             mPriceEditText.setText(String.valueOf(price));
         }
     }
@@ -231,5 +242,17 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
         // Show an unsaved changes dialog
         showUnsavedChangesDialog(discardButtonClickListener);
+    }
+
+    private void orderMore(String[] addresses, String subject){
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setData(Uri.parse("mailto:"));
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(Intent.createChooser(intent, "Send email"));
+        }
+
     }
 }

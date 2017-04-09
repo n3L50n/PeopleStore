@@ -7,6 +7,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.v("Clicked", "Something");
                 Intent intent = new Intent(MainActivity.this, ItemDetailActivity.class);
 
                 Uri currentItemUri = ContentUris.withAppendedId(PlacedEntry.CONTENT_URI, id);
@@ -74,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void deleteAllItems(){
         int deletedRows = getContentResolver().delete(PlacedEntry.CONTENT_URI, null, null);
         Log.v("MainActivity", deletedRows + " rows deleted from inventory.");
+    }
+
+    /** Use this method for the sale button **/
+    private void markOneSold() {
     }
 
     @Override

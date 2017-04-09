@@ -13,7 +13,7 @@
 
     <string name="save_button_text">Save Item</string>
     <string name="delete_button_text">Delete Item</string>
-    <string name="sale_button_text">Mark One Item Sold</string>
+    <string name="sale_button_text">Mark 1 Sold</string>
     <string name="order_more_button_text">Order More</string>
 
     <string name="save_item_winning">Item added!</string>
