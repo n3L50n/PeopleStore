@@ -66,16 +66,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
     }
 
-    private void insertItem(){
-        ContentValues values = new ContentValues();
-    }
-
-    /** Be careful with this one. It deletes all the rows in the database. **/
-    private void deleteAllItems(){
-        int deletedRows = getContentResolver().delete(PlacedEntry.CONTENT_URI, null, null);
-        Log.v("MainActivity", deletedRows + " rows deleted from inventory.");
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Defines projection specifying columns from table

@@ -81,7 +81,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mQuantityEditText.setOnTouchListener(mOnTouchListener);
         mPriceEditText.setOnTouchListener(mOnTouchListener);
 
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
         Button saveButton = (Button) findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
