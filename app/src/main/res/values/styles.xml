@@ -8,4 +8,36 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--List Item Styles-->
+    <style name="ListItemNameStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/list_item_product_name</item>
+    </style>
+
+    <style name="ListItemQuantityStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/list_item_product_quantity</item>
+
+    </style>
+
+    <style name="ListItemPriceStyle">
+        <item name="android:textColor">@color/list_item_product_price</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="ListItemSaleButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_toRightOf">@+id/list_item_text_layout</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_marginRight">@dimen/list_item_margin</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:text">@string/mark_one_sold</item>
+    </style>
+
 </resources>

@@ -1,13 +1,10 @@
 package com.node_coyote.placed;
 
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +13,6 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
-import com.node_coyote.placed.dataPackage.PlacedDatabaseHelper;
 
 /**
  * Created by node_coyote on 4/8/17.

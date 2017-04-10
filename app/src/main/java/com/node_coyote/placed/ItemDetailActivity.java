@@ -50,7 +50,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     private EditText mPriceEditText;
 
     private ImageButton mImageButton;
-    
+
     /** Let's use a boolean to keep track of whether or not a user has edited an item **/
     private boolean mItemHasChanged = false;
 
