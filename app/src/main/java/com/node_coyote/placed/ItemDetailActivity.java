@@ -29,29 +29,41 @@ import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
  * Created by node_coyote on 4/8/17.
  */
 
-public class ItemDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ItemDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    /** Identifier for item data loader **/
+    /**
+     * Identifier for item data loader
+     **/
     private static final int EXISTING_ITEM_LOADER = 42;
 
-    /** Content uri for an existing item in the inventory **/
+    /**
+     * Content uri for an existing item in the inventory
+     **/
     private Uri mCurrentItemUri;
 
-    /** EditText field for product name **/
+    /**
+     * EditText field for product name
+     **/
     private EditText mNameEditText;
 
-    /** EditText field for product quantity **/
+    /**
+     * EditText field for product quantity
+     **/
     private EditText mQuantityEditText;
 
-    /** EditText field for product price **/
+    /**
+     * EditText field for product price
+     **/
     private EditText mPriceEditText;
 
     private ImageButton mImageButton;
 
-    /** Let's use a boolean to keep track of whether or not a user has edited an item **/
+    /**
+     * Let's use a boolean to keep track of whether or not a user has edited an item
+     **/
     private boolean mItemHasChanged = false;
 
     private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
@@ -62,7 +74,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         }
     };
 
-    protected void onCreate(Bundle savedInstancestate){
+    protected void onCreate(Bundle savedInstancestate) {
         super.onCreate(savedInstancestate);
         setContentView(R.layout.item_detail);
 
@@ -70,20 +82,24 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
         Button deleteButton = (Button) findViewById(R.id.delete_button);
+        mNameEditText = (EditText) findViewById(R.id.edit_product_name_text_view);
+        mQuantityEditText = (EditText) findViewById(R.id.edit_product_quantity_text_view);
+        mPriceEditText = (EditText) findViewById(R.id.edit_product_price_text_view);
+        Button subtractOne = (Button) findViewById(R.id.subtract_one_button);
+        Button addMore = (Button) findViewById(R.id.add_one_button);
 
         // If there isn't an id, let's create a new item
-        if (mCurrentItemUri == null){
+        if (mCurrentItemUri == null) {
             setTitle(R.string.item_detail_activity_add_item);
             deleteButton.setVisibility(View.GONE);
+            subtractOne.setVisibility(View.GONE);
+            addMore.setVisibility(View.GONE);
 
         } else {
             setTitle(getString(R.string.item_detail_activity_edit_item));
             getLoaderManager().initLoader(EXISTING_ITEM_LOADER, null, this);
         }
 
-        mNameEditText = (EditText) findViewById(R.id.edit_product_name_text_view);
-        mQuantityEditText = (EditText) findViewById(R.id.edit_product_quantity_text_view);
-        mPriceEditText = (EditText) findViewById(R.id.edit_product_price_text_view);
 
         mNameEditText.setOnTouchListener(mOnTouchListener);
         mQuantityEditText.setOnTouchListener(mOnTouchListener);
@@ -115,20 +131,19 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
 
         // Decrease inventory Button
-        Button subtractOne = (Button) findViewById(R.id.subtract_one_button);
         subtractOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Pull out a new quantity to pass around
                 int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
                 if (quantity > 0) {
-                    quantity --;
+                    quantity--;
                     String newQuantity = Integer.toString(quantity);
                     ContentValues values = new ContentValues();
                     values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
 
                     int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
-                    if (rows != 0){
+                    if (rows != 0) {
                         mQuantityEditText.setText(newQuantity);
                     }
                 }
@@ -136,23 +151,36 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         });
 
         // Increase inventory Button
-        Button addMore = (Button) findViewById(R.id.add_one_button);
         addMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                ContentValues values = new ContentValues();
+
                 // Pull out a new quantity to pass around
                 int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
-                if (quantity > 0) {
-                    quantity ++;
-                    String newQuantity = Integer.toString(quantity);
-                    ContentValues values = new ContentValues();
-                    values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
 
-                    int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
-                    if (rows != 0){
-                        mQuantityEditText.setText(newQuantity);
-                    }
+                // Check if the field is empty
+                if (TextUtils.isEmpty(String.valueOf(quantity))) {
+                    quantity = 0;
                 }
+
+                // Make sure we're not in the negative, then increase by 1
+                if (quantity >= 0) {
+                    quantity++;
+                }
+
+                // Send the quantity integer back to string format
+                String newQuantity = Integer.toString(quantity);
+
+                // Pass along the new value
+                values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
+
+                int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
+                if (rows != 0) {
+                    mQuantityEditText.setText(newQuantity);
+                }
+
             }
         });
 
@@ -195,24 +223,25 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         if (mCurrentItemUri == null &&
                 TextUtils.isEmpty(nameString) &&
                 TextUtils.isEmpty(quantityString) &&
-                TextUtils.isEmpty(priceString)){
+                TextUtils.isEmpty(priceString)) {
             // Jump out early. No need to run any more operations
             return;
         }
 
         ContentValues values = new ContentValues();
+
         values.put(PlacedEntry.COLUMN_PRODUCT_NAME, nameString);
 
         // Let's set quantity to 0 by default, then check if the field is empty
         int quantity = 0;
-        if (!TextUtils.isEmpty(quantityString)){
+        if (!TextUtils.isEmpty(quantityString)) {
             quantity = Integer.parseInt(quantityString);
         }
         values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
 
         // Let's set a price of 0.00, then check if the field is empty
         double price = 0.00;
-        if (!TextUtils.isEmpty(priceString)){
+        if (!TextUtils.isEmpty(priceString)) {
             price = Double.parseDouble(priceString);
         }
         values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, price);
@@ -221,7 +250,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             Uri newUri = getContentResolver().insert(PlacedEntry.CONTENT_URI, values);
 
             // Let's show a toast of whether or not the save was successful
-            if (newUri == null){
+            if (newUri == null) {
                 // If the new uri is empty, the save didn't happen
                 Toast.makeText(this, getString(R.string.save_item_failed), Toast.LENGTH_SHORT).show();
             } else {
@@ -233,7 +262,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             int rowsAffected = getContentResolver().update(mCurrentItemUri, values, null, null);
 
             // If this update was successful or not, let's show a toast
-            if (rowsAffected == 0){
+            if (rowsAffected == 0) {
                 Toast.makeText(this, getString(R.string.update_item_failed), Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, getString(R.string.update_item_winning), Toast.LENGTH_SHORT).show();
@@ -263,11 +292,11 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // Let's not do this if we have an empty cursor or less than 1 row
-        if (cursor == null && cursor.getCount() < 1){
+        if (cursor == null && cursor.getCount() < 1) {
             return;
         }
 
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             // Find columns with item attributes
             int nameColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_NAME);
             int quantityColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_QUANTITY);
@@ -301,7 +330,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null){
+                if (dialog != null) {
                     dialog.dismiss();
                 }
             }
@@ -330,7 +359,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         showUnsavedChangesDialog(discardButtonClickListener);
     }
 
-    private void orderMore(String[] addresses, String subject){
+    private void orderMore(String[] addresses, String subject) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setData(Uri.parse("mailto:"));
         intent.setType("text/plain");
@@ -354,7 +383,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null){
+                if (dialog != null) {
                     dialog.dismiss();
                 }
             }
@@ -364,11 +393,11 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         dialog.show();
     }
 
-    private void deleteItem(){
-        if (mCurrentItemUri != null){
+    private void deleteItem() {
+        if (mCurrentItemUri != null) {
             int deletedRows = getContentResolver().delete(mCurrentItemUri, null, null);
 
-            if (deletedRows == 0){
+            if (deletedRows == 0) {
                 Toast.makeText(this, getString(R.string.delete_item_failed), Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, getString(R.string.delete_item_winning), Toast.LENGTH_LONG).show();

@@ -149,6 +149,10 @@ public class PlacedProvider extends ContentProvider {
             Log.v(LOG_TAG, "Failed to insert row for " + uri);
             return null;
         }
+
+        // Notify listeners of change
+        getContext().getContentResolver().notifyChange(uri, null);
+
         return ContentUris.withAppendedId(uri, id);
     }
 
