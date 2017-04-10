@@ -136,6 +136,12 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             public void onClick(View v) {
                 // Pull out a new quantity to pass around
                 int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
+
+                // Check if the field is empty
+                if (TextUtils.isEmpty(String.valueOf(quantity))) {
+                    quantity = 0;
+                }
+                
                 if (quantity > 0) {
                     quantity--;
                     String newQuantity = Integer.toString(quantity);
