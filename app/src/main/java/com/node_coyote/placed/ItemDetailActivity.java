@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
@@ -27,6 +30,9 @@ import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
  */
 
 public class ItemDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     /** Identifier for item data loader **/
     private static final int EXISTING_ITEM_LOADER = 42;
@@ -43,6 +49,8 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     /** EditText field for product price **/
     private EditText mPriceEditText;
 
+    private ImageButton mImageButton;
+    
     /** Let's use a boolean to keep track of whether or not a user has edited an item **/
     private boolean mItemHasChanged = false;
 
@@ -147,6 +155,31 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 }
             }
         });
+
+        ImageButton imageButton = (ImageButton) findViewById(R.id.product_image_view);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent;
+                if (Build.VERSION.SDK_INT < 19) {
+                    intent = new Intent(Intent.ACTION_GET_CONTENT);
+                } else {
+                    intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                }
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(intent, "Choose Picture"), REQUEST_IMAGE_CAPTURE);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mImageButton.setImageBitmap(imageBitmap);
+        }
     }
 
     /**
