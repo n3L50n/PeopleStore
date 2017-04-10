@@ -104,6 +104,49 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 showDeleteConfirmationDialog();
             }
         });
+
+
+        // Decrease inventory Button
+        Button subtractOne = (Button) findViewById(R.id.subtract_one_button);
+        subtractOne.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Pull out a new quantity to pass around
+                int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
+                if (quantity > 0) {
+                    quantity --;
+                    String newQuantity = Integer.toString(quantity);
+                    ContentValues values = new ContentValues();
+                    values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+
+                    int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
+                    if (rows != 0){
+                        mQuantityEditText.setText(newQuantity);
+                    }
+                }
+            }
+        });
+
+        // Increase inventory Button
+        Button addMore = (Button) findViewById(R.id.add_one_button);
+        addMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Pull out a new quantity to pass around
+                int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
+                if (quantity > 0) {
+                    quantity ++;
+                    String newQuantity = Integer.toString(quantity);
+                    ContentValues values = new ContentValues();
+                    values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+
+                    int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
+                    if (rows != 0){
+                        mQuantityEditText.setText(newQuantity);
+                    }
+                }
+            }
+        });
     }
 
     /**

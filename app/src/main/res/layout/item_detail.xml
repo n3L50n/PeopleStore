@@ -13,6 +13,22 @@
         android:layout_height="wrap_content"
         android:hint="@string/enter_product_name_hint"
         tools:text="@string/product_name_tool_text" />
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/add_one_button"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentRight="true"
+        android:focusable="false"
+        android:textSize="42sp"
+        android:focusableInTouchMode="false"
+        android:background="@color/transparent"
+        android:text="@string/add_one_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <EditText
         android:layout_gravity="center_horizontal"
@@ -22,6 +38,21 @@
         android:hint="@string/enter_product_quantity_hint"
         android:inputType="number"
         tools:text="@string/product_quantity_tool_text" />
+
+    <Button
+        android:id="@+id/subtract_one_button"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentRight="true"
+        android:textSize="42sp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@color/transparent"
+        android:text="@string/subtract_one_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
+
 
     <EditText
         android:textColor="@color/colorPrimary"

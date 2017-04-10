@@ -17,7 +17,9 @@
 
     <string name="save_button_text">Save Item</string>
     <string name="delete_button_text">Delete Item</string>
-    <string name="sale_button_text">Mark 1 Sold</string>
+    <string name="mark_one_sold">Mark 1 Sold</string>
+    <string name="subtract_one_text">-</string>
+    <string name="add_one_text">+</string>
     <string name="order_more_button_text">Order More</string>
 
     <string name="save_item_winning">Item added!</string>
@@ -33,7 +35,5 @@
     <string name="enter_product_quantity_hint">Enter quantity</string>
     <string name="enter_product_price_hint">Enter a price</string>
     <string name="product_price_tool_text">$42.00</string>
-
-    <string name="dollar">$</string>
 
 </resources>
