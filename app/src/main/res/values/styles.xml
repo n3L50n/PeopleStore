@@ -18,6 +18,76 @@
         <item name="android:src">@drawable/ic_add_item_fab</item>
     </style>
 
+    <!--Item Detail Styles-->
+    <style name="EditProductNameStyle">
+        <item name="android:hint">@string/enter_product_name_hint</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="EditProductPriceStyle">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:inputType">numberDecimal</item>
+        <item name="android:hint">@string/enter_product_name_hint</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="AddOneButtonStyle">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/add_one_text</item>
+        <item name="android:textSize">@dimen/add_subtract_text_size</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+    </style>
+
+    <style name="SubtractOneButtonStyle">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/subtract_one_text</item>
+        <item name="android:textSize">@dimen/add_subtract_text_size</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+    </style>
+
+    <style name="OrderMoreStyle">
+        <item name="android:text">@string/order_more_button_text</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:background">@color/transparent</item>
+    </style>
+
+    <style name="SaveButtonStyle">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="TouchImageTextStyle">
+        <item name="android:text">@string/add_image</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginBottom">@dimen/touch_image_margin</item>
+    </style>
+
+    <style name="ItemDetailDeleteButtonStyle">
+        <item name="android:text">@string/delete_button_text</item>
+        <item name="android:textColor">@color/delete_button_text</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
     <!--List Item Styles-->
     <style name="ListItemNameStyle">
         <item name="android:layout_width">wrap_content</item>

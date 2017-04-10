@@ -5,7 +5,7 @@
     <color name="colorAccent">#40C4FF</color>
 
     <color name="transparent">@android:color/transparent</color>
-    <color name="delete_button_text">@android:color/holo_red_dark</color>
+    <color name="delete_button_text">@color/colorPrimary</color>
 
     <color name="empty_title_color">@android:color/black</color>
     <color name="empty_subtitle_color">@android:color/darker_gray</color>

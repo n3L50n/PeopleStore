@@ -1,107 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/basic_margin">
 
     <EditText
-        android:layout_gravity="center_horizontal"
         android:id="@+id/edit_product_name_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/enter_product_name_hint"
+        style="@style/EditProductNameStyle"
         tools:text="@string/product_name_tool_text" />
-<LinearLayout
-    android:orientation="horizontal"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/add_one_button"
-        android:layout_marginRight="16dp"
-        android:layout_alignParentRight="true"
-        android:focusable="false"
-        android:textSize="@dimen/add_subtract_text_size"
-        android:focusableInTouchMode="false"
-        android:background="@color/transparent"
-        android:text="@string/add_one_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/quantity_buttons_layout" />
 
     <EditText
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/edit_product_quantity_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/enter_product_quantity_hint"
-        android:inputType="number"
-        tools:text="@string/product_quantity_tool_text" />
-
-    <Button
-        android:id="@+id/subtract_one_button"
-        android:layout_marginRight="16dp"
-        android:layout_alignParentRight="true"
-        android:textSize="@dimen/add_subtract_text_size"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:background="@color/transparent"
-        android:text="@string/subtract_one_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-</LinearLayout>
-
-
-    <EditText
-        android:textColor="@color/colorPrimary"
-        android:layout_gravity="center_horizontal"
         android:id="@+id/edit_product_price_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/enter_product_price_hint"
-        android:inputType="numberDecimal"
+        style="@style/EditProductPriceStyle"
         tools:text="@string/product_price_tool_text" />
 
     <Button
-        android:layout_gravity="center_horizontal"
-        android:background="@color/transparent"
         android:id="@+id/save_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/SaveButtonStyle"
         android:text="@string/save_button_text" />
 
     <Button
-        android:textColor="@color/colorAccent"
         android:id="@+id/order_more_button"
-        android:background="@color/transparent"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/order_more_button_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        style="@style/OrderMoreStyle" />
 
-    <TextView
-        android:layout_marginBottom="@dimen/touch_image_margin"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/add_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <TextView style="@style/TouchImageTextStyle" />
 
     <ImageButton
-        android:background="@color/colorPrimaryDark"
-        android:layout_gravity="center_horizontal"
         android:id="@+id/product_image_view"
+        android:src="@drawable/ic_add_item_fab"
         android:layout_width="@dimen/image_button_width"
-        android:layout_height="@dimen/image_button_height" />
+        android:layout_height="@dimen/image_button_height"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/colorPrimaryDark"
+        android:contentDescription="@string/inventory_image_content_description" />
 
     <Button
-        android:layout_gravity="center_horizontal"
-        android:textColor="@color/delete_button_text"
-        android:background="@color/transparent"
         android:id="@+id/delete_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/delete_button_text" />
+        style="@style/ItemDetailDeleteButtonStyle" />
 
 </LinearLayout>

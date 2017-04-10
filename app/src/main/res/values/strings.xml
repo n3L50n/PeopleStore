@@ -37,6 +37,8 @@
     <string name="product_price_tool_text">$42.00</string>
     <string name="add_image">Touch the square to add or change an image.</string>
 
+    <string name="inventory_image_content_description">An image of the inventory item</string>
+
     <!--Preview Tool Strings-->
     <string name="list_item_product_tool">Magic: The Gathering Cards</string>
     <string name="list_item_quantity_tool">42</string>
