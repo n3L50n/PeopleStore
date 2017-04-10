@@ -8,6 +8,16 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="FABStyle">
+        <item name="android:layout_marginRight">@dimen/basic_margin</item>
+        <item name="android:layout_marginBottom">@dimen/basic_margin</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:src">@drawable/ic_add_item_fab</item>
+    </style>
+
     <!--List Item Styles-->
     <style name="ListItemNameStyle">
         <item name="android:layout_width">wrap_content</item>
@@ -19,7 +29,6 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/list_item_product_quantity</item>
-
     </style>
 
     <style name="ListItemPriceStyle">
@@ -38,6 +47,27 @@
         <item name="android:focusableInTouchMode">false</item>
         <item name="android:background">@color/transparent</item>
         <item name="android:text">@string/mark_one_sold</item>
+    </style>
+
+    <!--Empty View Styles-->
+    <style name="EmptyViewTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_below">@+id/empty_inventory_image</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:text">@string/empty_text_title</item>
+        <item name="android:textColor">@color/empty_title_color</item>
+    </style>
+
+    <style name="EmptyViewSubtitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingRight">@dimen/empty_text_subtitle_padding_right</item>
+        <item name="android:paddingLeft">@dimen/empty_text_subtitle_padding_left</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:text">@string/empty_text_subtitle</item>
+        <item name="android:textColor">@color/empty_subtitle_color</item>
+        <item name="android:layout_below">@+id/empty_text_view</item>
     </style>
 
 </resources>
