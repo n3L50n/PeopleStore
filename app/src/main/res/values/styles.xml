@@ -26,9 +26,18 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
+    <style name="EditProductQuantityStyle">
+        <item name="android:hint">@string/enter_product_quantity_hint</item>
+        <item name="android:inputType">number</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="EditProductPriceStyle">
-        <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:inputType">numberDecimal</item>
+        <item name="android:gravity">center</item>
         <item name="android:hint">@string/enter_product_price_hint</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -65,6 +74,9 @@
     </style>
 
     <style name="SaveButtonStyle">
+        <item name="android:text">@string/save_button_text</item>
+        <item name="android:textColor">@color/save_button_text_color</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:background">@color/transparent</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -124,7 +136,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_below">@+id/empty_inventory_image</item>
-        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_centerInParent">true</item>
         <item name="android:text">@string/empty_text_title</item>
         <item name="android:textColor">@color/empty_title_color</item>
     </style>
@@ -134,7 +146,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingRight">@dimen/empty_text_subtitle_padding_right</item>
         <item name="android:paddingLeft">@dimen/empty_text_subtitle_padding_left</item>
-        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_centerInParent">true</item>
         <item name="android:text">@string/empty_text_subtitle</item>
         <item name="android:textColor">@color/empty_subtitle_color</item>
         <item name="android:layout_below">@+id/empty_text_view</item>

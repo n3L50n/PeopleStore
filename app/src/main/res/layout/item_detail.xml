@@ -20,8 +20,7 @@
 
     <Button
         android:id="@+id/save_button"
-        style="@style/SaveButtonStyle"
-        android:text="@string/save_button_text" />
+        style="@style/SaveButtonStyle" />
 
     <Button
         android:id="@+id/order_more_button"
@@ -31,22 +30,22 @@
 
     <ImageButton
         android:id="@+id/product_image_view"
-        android:src="@drawable/ic_add_item_fab"
         android:layout_width="@dimen/image_button_width"
         android:layout_height="@dimen/image_button_height"
         android:layout_gravity="center_horizontal"
         android:background="@color/colorPrimaryDark"
-        android:contentDescription="@string/inventory_image_content_description" />
+        android:contentDescription="@string/inventory_image_content_description"
+        android:src="@drawable/ic_add_item_fab" />
 
     <Button
         android:id="@+id/delete_button"
         style="@style/ItemDetailDeleteButtonStyle" />
 
     <EditText
-        android:visibility="invisible"
         android:id="@+id/image_text"
-        android:textColor="@color/transparent"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/transparent"
+        android:visibility="invisible" />
 
 </LinearLayout>
