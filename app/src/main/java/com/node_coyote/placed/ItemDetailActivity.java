@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -24,6 +26,9 @@ import android.widget.Toast;
 
 import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
+
 
 /**
  * Created by node_coyote on 4/8/17.
@@ -32,8 +37,8 @@ import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
 public class ItemDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
+    static final int CHOOSE_IMAGE_REQUEST = 1;
+    private Uri mCurrentImageItemUri;
     /**
      * Identifier for item data loader
      **/
@@ -59,7 +64,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
      **/
     private EditText mPriceEditText;
 
-    private ImageButton mImageButton;
+    private ImageButton mInventoryImageButton;
 
     /**
      * Let's use a boolean to keep track of whether or not a user has edited an item
@@ -141,7 +146,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 if (TextUtils.isEmpty(String.valueOf(quantity))) {
                     quantity = 0;
                 }
-                
+
                 if (quantity > 0) {
                     quantity--;
                     String newQuantity = Integer.toString(quantity);
@@ -190,8 +195,9 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             }
         });
 
-        ImageButton imageButton = (ImageButton) findViewById(R.id.product_image_view);
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        // Touching the button will open the image directory
+        mInventoryImageButton = (ImageButton) findViewById(R.id.product_image_view);
+        mInventoryImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent;
@@ -202,17 +208,56 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
                 }
                 intent.setType("image/*");
-                startActivityForResult(Intent.createChooser(intent, "Choose Picture"), REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(Intent.createChooser(intent, "Choose Picture"), CHOOSE_IMAGE_REQUEST);
             }
         });
     }
 
+    // looked at Google documentation and Carlos' https://github.com/crlsndrsjmnz/MyFileProviderExample
+    // for help implementing photo storage process
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mImageButton.setImageBitmap(imageBitmap);
+        if (requestCode == CHOOSE_IMAGE_REQUEST && resultCode == RESULT_OK) {
+
+            mCurrentImageItemUri = data.getData();
+            mInventoryImageButton.setImageBitmap(getBitmapFromUri(mCurrentImageItemUri));
+            //Bundle extras = data.getExtras();
+
+            //Bitmap imageBitmap = (Bitmap) extras.get("data");
+            //mImageButton.setImageBitmap(imageBitmap);
+        }
+    }
+
+//    public String getImagePath(){
+//        String s = null;
+//        String[] projection = new String[]{ , null, null, null};
+//        Cursor cursor = getContentResolver().query(PlacedEntry.CONTENT_URI, );
+//        if (cursor.moveToFirst()){
+//
+//        }
+//    }
+
+    private Bitmap getBitmapFromUri(Uri uri){
+
+        ParcelFileDescriptor parcelFileDescriptor = null;
+        try {
+            parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+            Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+            parcelFileDescriptor.close();
+            return bitmap;
+        } catch (Exception e){
+            Log.e("bitMapException", "Failed to load bitmap", e);
+            return null;
+        } finally {
+            try {
+                if (parcelFileDescriptor != null){
+                    parcelFileDescriptor.close();
+                }
+            } catch (IOException e){
+                e.printStackTrace();
+                Log.e("ioException", "Error closing ParcelFile Descriptor", e);
+            }
         }
     }
 
