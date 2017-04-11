@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +64,10 @@ public class PlacedCursorAdapter extends CursorAdapter {
         final int quantity = cursor.getInt(quantityColumnIndex);
         double price = cursor.getDouble(priceColumnIndex);
         final long currentId = cursor.getLong(idColumnIndex);
+
+        if (TextUtils.isEmpty(name)){
+            name = context.getString(R.string.empty_name);
+        }
 
         markSoldButton.setOnClickListener(new View.OnClickListener() {
             @Override

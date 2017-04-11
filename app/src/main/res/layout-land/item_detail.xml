@@ -89,6 +89,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <EditText
+            android:visibility="invisible"
+            android:id="@+id/image_text"
+            android:textColor="@color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
 

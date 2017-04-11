@@ -34,7 +34,8 @@ public class PlacedDatabaseHelper extends SQLiteOpenHelper {
                 + PlacedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + PlacedEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, "
                 + PlacedEntry.COLUMN_PRODUCT_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
-                + PlacedEntry.COLUMN_PRODUCT_PRICE + " REAL NOT NULL DEFAULT 0.00);";
+                + PlacedEntry.COLUMN_PRODUCT_PRICE + " REAL NOT NULL DEFAULT 0.00, "
+                + PlacedEntry.COLUMN_PRODUCT_IMAGE +  " TEXT);";
 
         db.execSQL(SQL_CREATE_INVENTORY_TABLE);
 

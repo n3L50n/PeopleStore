@@ -81,5 +81,11 @@ public final class PlacedContract {
          */
         public static final String COLUMN_PRODUCT_PRICE = "price";
 
+        /**
+         * Type: TEXT
+         * The image of the product
+         */
+        public static final String COLUMN_PRODUCT_IMAGE = "image";
+
     }
 }

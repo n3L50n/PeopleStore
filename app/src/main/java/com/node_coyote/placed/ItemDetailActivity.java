@@ -37,8 +37,11 @@ import java.io.IOException;
 public class ItemDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
-    static final int CHOOSE_IMAGE_REQUEST = 1;
-    private Uri mCurrentImageItemUri;
+    /**
+     * Identifier for the image directory opener intent
+     */
+    static final int CHOOSE_IMAGE_REQUEST = 0;
+
     /**
      * Identifier for item data loader
      **/
@@ -65,6 +68,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     private EditText mPriceEditText;
 
     private ImageButton mInventoryImageButton;
+    private EditText mImageText;
 
     /**
      * Let's use a boolean to keep track of whether or not a user has edited an item
@@ -92,6 +96,8 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mPriceEditText = (EditText) findViewById(R.id.edit_product_price_text_view);
         Button subtractOne = (Button) findViewById(R.id.subtract_one_button);
         Button addMore = (Button) findViewById(R.id.add_one_button);
+        mInventoryImageButton = (ImageButton) findViewById(R.id.product_image_view);
+        mImageText = (EditText) findViewById(R.id.image_text);
 
         // If there isn't an id, let's create a new item
         if (mCurrentItemUri == null) {
@@ -109,6 +115,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mNameEditText.setOnTouchListener(mOnTouchListener);
         mQuantityEditText.setOnTouchListener(mOnTouchListener);
         mPriceEditText.setOnTouchListener(mOnTouchListener);
+        mImageText.setOnTouchListener(mOnTouchListener);
 
         Button saveButton = (Button) findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -196,7 +203,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         });
 
         // Touching the button will open the image directory
-        mInventoryImageButton = (ImageButton) findViewById(R.id.product_image_view);
         mInventoryImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -218,26 +224,18 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CHOOSE_IMAGE_REQUEST && resultCode == RESULT_OK) {
-
-            mCurrentImageItemUri = data.getData();
-            mInventoryImageButton.setImageBitmap(getBitmapFromUri(mCurrentImageItemUri));
-            //Bundle extras = data.getExtras();
-
-            //Bitmap imageBitmap = (Bitmap) extras.get("data");
-            //mImageButton.setImageBitmap(imageBitmap);
+            if (data != null) {
+                Uri path = data.getData();
+                Log.v("PATH", path.toString());
+                mImageText.setText(path.toString());
+                mInventoryImageButton.setImageBitmap(getBitmapFromUri(path));
+            }
         }
     }
 
-//    public String getImagePath(){
-//        String s = null;
-//        String[] projection = new String[]{ , null, null, null};
-//        Cursor cursor = getContentResolver().query(PlacedEntry.CONTENT_URI, );
-//        if (cursor.moveToFirst()){
-//
-//        }
-//    }
-
-    private Bitmap getBitmapFromUri(Uri uri){
+    // looked at Google documentation and Carlos' https://github.com/crlsndrsjmnz/MyFileProviderExample
+    // for help implementing photo storage process
+    private Bitmap getBitmapFromUri(Uri uri) {
 
         ParcelFileDescriptor parcelFileDescriptor = null;
         try {
@@ -246,15 +244,15 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
             parcelFileDescriptor.close();
             return bitmap;
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e("bitMapException", "Failed to load bitmap", e);
             return null;
         } finally {
             try {
-                if (parcelFileDescriptor != null){
+                if (parcelFileDescriptor != null) {
                     parcelFileDescriptor.close();
                 }
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
                 Log.e("ioException", "Error closing ParcelFile Descriptor", e);
             }
@@ -269,12 +267,14 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         String nameString = mNameEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
+        String imageString = mImageText.getText().toString().trim();
 
         // Check if this is a new item and if all fields are blank
         if (mCurrentItemUri == null &&
                 TextUtils.isEmpty(nameString) &&
                 TextUtils.isEmpty(quantityString) &&
-                TextUtils.isEmpty(priceString)) {
+                TextUtils.isEmpty(priceString) &&
+                TextUtils.isEmpty(imageString)) {
             // Jump out early. No need to run any more operations
             return;
         }
@@ -329,7 +329,8 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 PlacedEntry._ID,
                 PlacedEntry.COLUMN_PRODUCT_NAME,
                 PlacedEntry.COLUMN_PRODUCT_QUANTITY,
-                PlacedEntry.COLUMN_PRODUCT_PRICE
+                PlacedEntry.COLUMN_PRODUCT_PRICE,
+                PlacedEntry.COLUMN_PRODUCT_IMAGE
         };
 
         return new CursorLoader(this,
@@ -352,16 +353,25 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             int nameColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_NAME);
             int quantityColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_QUANTITY);
             int priceColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_PRICE);
+            int imageColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_IMAGE);
 
             // Get the values from the cursor
             String name = cursor.getString(nameColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
             double price = cursor.getDouble(priceColumnIndex);
+            String image = cursor.getString(imageColumnIndex);
 
             // Update UI
             mNameEditText.setText(name);
             mQuantityEditText.setText(String.valueOf(quantity));
             mPriceEditText.setText(String.valueOf(price));
+            mImageText.setText(image);
+
+            // Thank you Udacity forums
+            if (mImageText != null) {
+                Uri path = Uri.parse(mImageText.getText().toString());
+                mInventoryImageButton.setImageBitmap(getBitmapFromUri(path));
+            }
         }
     }
 
@@ -371,6 +381,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mNameEditText.setText("");
         mQuantityEditText.setText("");
         mPriceEditText.setText("");
+        mImageText.setText("");
 
     }
 
