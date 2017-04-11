@@ -13,10 +13,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -468,5 +471,46 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
         // Close Activity
         finish();
+    }
+
+    /**
+     * Use these 3 methods to handle the Up button save case.
+     * I'd like to prevent users from exiting with unsaved changes.
+     * @param menu
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case android.R.id.home:
+                if (!mItemHasChanged) {
+                    NavUtils.navigateUpFromSameTask(ItemDetailActivity.this);
+                    return true;
+                }
+                // If so, let's pop up a dialog
+                DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                };
+
+                // Show an unsaved changes dialog
+                showUnsavedChangesDialog(discardButtonClickListener);
+                return true;
+
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 }
