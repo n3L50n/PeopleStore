@@ -129,8 +129,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         orderMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                orderMore(new String[]{"number42@gmailcom"}, "I'd like to order more.");
-                Log.v("Clicked", "Fore real");
+                orderMore(new String[]{String.valueOf(R.string.email_address)}, String.valueOf(R.string.email_text));
             }
         });
 
@@ -193,6 +192,8 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
                 // Pass along the new value
                 values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
+
+                values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, Double.parseDouble(mPriceEditText.getText().toString()));
 
                 int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
                 if (rows != 0) {
