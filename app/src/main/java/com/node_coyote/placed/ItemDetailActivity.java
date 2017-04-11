@@ -367,7 +367,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             mPriceEditText.setText(String.valueOf(price));
             mImageText.setText(image);
 
-            // Thank you Udacity forums
             if (mImageText != null) {
                 Uri path = Uri.parse(mImageText.getText().toString());
                 mInventoryImageButton.setImageBitmap(getBitmapFromUri(path));
