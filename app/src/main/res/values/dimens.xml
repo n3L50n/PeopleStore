@@ -15,4 +15,9 @@
     <dimen name="empty_text_subtitle_padding_right">16dp</dimen>
     <dimen name="empty_text_subtitle_padding_left">16dp</dimen>
 
+    <!--Save Button-->
+    <dimen name="save_button_padding_left">6dp</dimen>
+    <dimen name="save_button_padding_right">6dp</dimen>
+    <dimen name="save_button_text_size">18sp</dimen>
+
 </resources>

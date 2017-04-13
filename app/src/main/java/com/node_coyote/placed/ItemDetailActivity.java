@@ -72,6 +72,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
     private ImageButton mInventoryImageButton;
     private EditText mImageText;
+    private boolean mSaveHasBeenPushed = false;
 
     /**
      * Let's use a boolean to keep track of whether or not a user has edited an item
@@ -118,7 +119,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mNameEditText.setOnTouchListener(mOnTouchListener);
         mQuantityEditText.setOnTouchListener(mOnTouchListener);
         mPriceEditText.setOnTouchListener(mOnTouchListener);
-        mImageText.setOnTouchListener(mOnTouchListener);
+        mInventoryImageButton.setOnTouchListener(mOnTouchListener);
 
         Button saveButton = (Button) findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -267,6 +268,12 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
      * Get user input from editor and save item to database
      */
     private void saveItem() {
+
+        // Create checks for each required field. I do not require an image.
+        boolean nameEntered = false;
+        boolean quantityEntered = false;
+        boolean priceEntered = false;
+
         // Read from input fields then trim empty garbage
         String nameString = mNameEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
@@ -285,44 +292,75 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
         ContentValues values = new ContentValues();
 
+        // If something is in the name field, it can be saved
+        if (!TextUtils.isEmpty(nameString)){
+            nameEntered = true;
+        }
+
         values.put(PlacedEntry.COLUMN_PRODUCT_NAME, nameString);
 
         // Let's set quantity to 0 by default, then check if the field is empty
+        // If something is in the quantity field, it can be saved
         int quantity = 0;
         if (!TextUtils.isEmpty(quantityString)) {
             quantity = Integer.parseInt(quantityString);
+            quantityEntered = true;
         }
         values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
 
         // Let's set a price of 0.00, then check if the field is empty
+        // if something is in the price field, it can be saved
         double price = 0.00;
         if (!TextUtils.isEmpty(priceString)) {
             price = Double.parseDouble(priceString);
+            priceEntered = true;
         }
+
         values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, price);
 
-        if (mCurrentItemUri == null) {
-            Uri newUri = getContentResolver().insert(PlacedEntry.CONTENT_URI, values);
+        // If all the 3 fields name, quantity, and price have something in them, proceed
+        if (nameEntered && quantityEntered && priceEntered) {
 
-            // Let's show a toast of whether or not the save was successful
-            if (newUri == null) {
-                // If the new uri is empty, the save didn't happen
-                Toast.makeText(this, getString(R.string.save_item_failed), Toast.LENGTH_SHORT).show();
+            // A save can now happen
+            mSaveHasBeenPushed = true;
+
+            // Check if this is an add or an update
+            if (mCurrentItemUri == null) {
+                Uri newUri = getContentResolver().insert(PlacedEntry.CONTENT_URI, values);
+
+                // Let's show a toast of whether or not the save was successful
+                if (newUri == null) {
+                    // If the new uri is empty, the save didn't happen
+                    Toast.makeText(this, getString(R.string.save_item_failed), Toast.LENGTH_SHORT).show();
+                } else {
+                    // If the a new uri is returned, the save most likely happened.
+                    Toast.makeText(this, getString(R.string.save_item_winning), Toast.LENGTH_SHORT).show();
+                }
             } else {
-                // If the a new uri is returned, the save most likely happened.
-                Toast.makeText(this, getString(R.string.save_item_winning), Toast.LENGTH_SHORT).show();
+                // Or this item exists. so we should update the uri
+                int rowsAffected = getContentResolver().update(mCurrentItemUri, values, null, null);
+
+                // If this update was successful or not, let's show a toast
+                if (rowsAffected == 0) {
+                    Toast.makeText(this, getString(R.string.update_item_failed), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, getString(R.string.update_item_winning), Toast.LENGTH_SHORT).show();
+                }
             }
         } else {
-            // Or this item exists. so we should update the uri
-            int rowsAffected = getContentResolver().update(mCurrentItemUri, values, null, null);
+            //  If all the 3 fields name, quantity, and price do not have something and a save is attempted, show unsaved dialog
+            DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            };
 
-            // If this update was successful or not, let's show a toast
-            if (rowsAffected == 0) {
-                Toast.makeText(this, getString(R.string.update_item_failed), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, getString(R.string.update_item_winning), Toast.LENGTH_SHORT).show();
-            }
+            // Show an unsaved changes dialog
+            showUnsavedChangesDialog(discardButtonClickListener);
         }
+
+
 
     }
 
@@ -411,17 +449,21 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             super.onBackPressed();
             return;
         }
+        if (!mSaveHasBeenPushed) {
+            // If so, let's pop up a dialog
+            DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            };
 
-        // If so, let's pop up a dialog
-        DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        };
+            // Show an unsaved changes dialog
+            showUnsavedChangesDialog(discardButtonClickListener);
+        } else {
+            super.onBackPressed();
+        }
 
-        // Show an unsaved changes dialog
-        showUnsavedChangesDialog(discardButtonClickListener);
     }
 
     private void orderMore(String[] addresses, String subject) {
@@ -495,20 +537,22 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         switch (menuItem.getItemId()) {
             case android.R.id.home:
                 if (!mItemHasChanged) {
-                    NavUtils.navigateUpFromSameTask(ItemDetailActivity.this);
+                        NavUtils.navigateUpFromSameTask(ItemDetailActivity.this);
+                        return true;
+                }
+                if (!mSaveHasBeenPushed){
+                    // If so, let's pop up a dialog
+                    DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    };
+
+                    // Show an unsaved changes dialog
+                    showUnsavedChangesDialog(discardButtonClickListener);
                     return true;
                 }
-                // If so, let's pop up a dialog
-                DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                };
-
-                // Show an unsaved changes dialog
-                showUnsavedChangesDialog(discardButtonClickListener);
-                return true;
 
         }
         return super.onOptionsItemSelected(menuItem);
