@@ -41,6 +41,10 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <Button
+            style="@style/ChooseExistingButtonStyle"
+            android:id="@+id/choose_existing_photo" />
+
         <ImageButton
             android:id="@+id/product_image_view"
             android:layout_width="@dimen/image_button_width"

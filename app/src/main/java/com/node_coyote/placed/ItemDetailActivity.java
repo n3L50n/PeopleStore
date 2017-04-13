@@ -84,9 +84,14 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     private EditText mPriceEditText;
 
     /**
-     * A
+     * A button to take a photo and an ImageView to show a chosen photo
      */
     private ImageButton mInventoryImageButton;
+
+    /**
+     * A button to choose an existing photo
+     */
+    private Button mChooseExistingButton;
 
     /**
      * Variable to help saveItem method determine if fields have been filled out
@@ -125,6 +130,8 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         Button subtractOne = (Button) findViewById(R.id.subtract_one_button);
         Button addMore = (Button) findViewById(R.id.add_one_button);
         mInventoryImageButton = (ImageButton) findViewById(R.id.product_image_view);
+        mChooseExistingButton = (Button) findViewById(R.id.choose_existing_photo);
+
 
         // If there isn't an id, let's create a new item
         if (mCurrentItemUri == null) {
@@ -142,7 +149,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mNameEditText.setOnTouchListener(mOnTouchListener);
         mQuantityEditText.setOnTouchListener(mOnTouchListener);
         mPriceEditText.setOnTouchListener(mOnTouchListener);
-        mInventoryImageButton.setOnTouchListener(mOnTouchListener);
 
         Button saveButton = (Button) findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -231,10 +237,9 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         });
 
         // Touching the button will open the image directory
-        mInventoryImageButton.setOnClickListener(new View.OnClickListener() {
+        mChooseExistingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                takeInventoryPhoto();
                 Intent intent;
                 if (Build.VERSION.SDK_INT < 19) {
                     intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -244,6 +249,14 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 }
                 intent.setType("image/*");
                 startActivityForResult(Intent.createChooser(intent, "Choose Picture"), CHOOSE_IMAGE_REQUEST);
+            }
+        });
+
+        mInventoryImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takeInventoryPhoto();
+
             }
         });
     }
@@ -263,6 +276,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 Uri photoUri = FileProvider.getUriForFile(this, PlacedContract.CONTENT_AUTHORITY, photo);
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 startActivityForResult(pictureIntent, REQUEST_IMAGE_CAPTURE);
+                setPicture();
             }
         }
     }
@@ -281,6 +295,11 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         );
         // set the image path. we can use it with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
+
+        // Save the photo path to the data base
+        ContentValues values = new ContentValues();
+        values.put(PlacedEntry.COLUMN_PRODUCT_IMAGE, mCurrentPhotoPath);
+
         return image;
     }
 
@@ -301,9 +320,8 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 Uri path = data.getData();
                 Log.v("PATH", path.toString());
                 mCurrentPhotoPath = path.toString();
-                addGalleryPic();
                 setPicture();
-                mInventoryImageButton.setImageBitmap(getBitmapFromUri(path));
+                addGalleryPic();
             }
         }
     }
@@ -408,6 +426,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         }
 
         values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, price);
+        values.put(PlacedEntry.COLUMN_PRODUCT_IMAGE, mCurrentPhotoPath);
 
         // If all the 3 fields name, quantity, and price have something in them, proceed
         if (nameEntered && quantityEntered && priceEntered) {
@@ -493,6 +512,9 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             int quantity = cursor.getInt(quantityColumnIndex);
             double price = cursor.getDouble(priceColumnIndex);
             String image = cursor.getString(imageColumnIndex);
+
+            Uri imageUri =  Uri.parse(image);
+            mInventoryImageButton.setImageBitmap(getBitmapFromUri(imageUri));
 
             // Update UI
             mNameEditText.setText(name);
