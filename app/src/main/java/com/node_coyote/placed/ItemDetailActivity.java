@@ -12,8 +12,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -27,10 +30,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.node_coyote.placed.dataPackage.PlacedContract;
 import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -39,11 +46,17 @@ import java.io.IOException;
 
 public class ItemDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LOG_TAG = ItemDetailActivity.class.getSimpleName();
 
     /**
      * Identifier for the image directory opener intent
      */
     static final int CHOOSE_IMAGE_REQUEST = 0;
+
+    /**
+     * Identifier for the camera intent
+     */
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     /**
      * Identifier for item data loader
@@ -70,9 +83,20 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
      **/
     private EditText mPriceEditText;
 
+    /**
+     * A
+     */
     private ImageButton mInventoryImageButton;
-    private EditText mImageText;
+
+    /**
+     * Variable to help saveItem method determine if fields have been filled out
+     */
     private boolean mSaveHasBeenPushed = false;
+
+    /**
+     * Variable to store the path to a photo saved
+     */
+    String mCurrentPhotoPath;
 
     /**
      * Let's use a boolean to keep track of whether or not a user has edited an item
@@ -101,7 +125,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         Button subtractOne = (Button) findViewById(R.id.subtract_one_button);
         Button addMore = (Button) findViewById(R.id.add_one_button);
         mInventoryImageButton = (ImageButton) findViewById(R.id.product_image_view);
-        mImageText = (EditText) findViewById(R.id.image_text);
 
         // If there isn't an id, let's create a new item
         if (mCurrentItemUri == null) {
@@ -211,6 +234,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mInventoryImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                takeInventoryPhoto();
                 Intent intent;
                 if (Build.VERSION.SDK_INT < 19) {
                     intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -224,6 +248,50 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         });
     }
 
+    private void takeInventoryPhoto(){
+        Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (pictureIntent.resolveActivity(getPackageManager()) != null) {
+
+            // Create the File for where the photo should go
+            File photo = null;
+            try {
+                photo = createImageFile();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error while saving photo", e);
+            }
+            if (photo != null){
+                Uri photoUri = FileProvider.getUriForFile(this, PlacedContract.CONTENT_AUTHORITY, photo);
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(pictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+
+        // Create a collision-resistant name for the image file
+        String timeStamp = new SimpleDateFormat("yyyymmdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        // Get the file storage available to all apps. Deleted if user deletes app
+        File storageFileDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName, // This is the prefix
+                ".jpg",          // We'll save it as a jpg
+                storageFileDirectory // Store it here
+        );
+        // set the image path. we can use it with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void addGalleryPic(){
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File file = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(file);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
     // looked at Google documentation and Carlos' https://github.com/crlsndrsjmnz/MyFileProviderExample
     // for help implementing photo storage process
     @Override
@@ -232,10 +300,35 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             if (data != null) {
                 Uri path = data.getData();
                 Log.v("PATH", path.toString());
-                mImageText.setText(path.toString());
+                mCurrentPhotoPath = path.toString();
+                addGalleryPic();
+                setPicture();
                 mInventoryImageButton.setImageBitmap(getBitmapFromUri(path));
             }
         }
+    }
+
+    private void setPicture(){
+        // get dimensions of View
+        int targetWidth = mInventoryImageButton.getWidth();
+        int targetHeight = mInventoryImageButton.getHeight();
+
+        // get dimensions of bitmap
+        BitmapFactory.Options bitMapOptions = new BitmapFactory.Options();
+        bitMapOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentPhotoPath, bitMapOptions);
+        int photoWidth = bitMapOptions.outWidth;
+        int photoHeight = bitMapOptions.outHeight;
+
+        // determine image scale down
+        int scaleFactor = Math.min(photoWidth/targetWidth, photoHeight/targetHeight);
+
+        // decode image file into a Bitmap sized to fill the view
+        bitMapOptions.inJustDecodeBounds = false;
+        bitMapOptions.inSampleSize = scaleFactor;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bitMapOptions);
+        mInventoryImageButton.setImageBitmap(bitmap);
     }
 
     // looked at Google documentation and Carlos' https://github.com/crlsndrsjmnz/MyFileProviderExample
@@ -278,14 +371,12 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         String nameString = mNameEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
-        String imageString = mImageText.getText().toString().trim();
 
         // Check if this is a new item and if all fields are blank
         if (mCurrentItemUri == null &&
                 TextUtils.isEmpty(nameString) &&
                 TextUtils.isEmpty(quantityString) &&
-                TextUtils.isEmpty(priceString) &&
-                TextUtils.isEmpty(imageString)) {
+                TextUtils.isEmpty(priceString)) {
             // Jump out early. No need to run any more operations
             return;
         }
@@ -407,12 +498,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             mNameEditText.setText(name);
             mQuantityEditText.setText(String.valueOf(quantity));
             mPriceEditText.setText(String.valueOf(price));
-            mImageText.setText(image);
 
-            if (mImageText != null) {
-                Uri path = Uri.parse(mImageText.getText().toString());
-                mInventoryImageButton.setImageBitmap(getBitmapFromUri(path));
-            }
         }
     }
 
@@ -422,8 +508,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mNameEditText.setText("");
         mQuantityEditText.setText("");
         mPriceEditText.setText("");
-        mImageText.setText("");
-
     }
 
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
