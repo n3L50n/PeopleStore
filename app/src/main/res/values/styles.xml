@@ -66,15 +66,19 @@
     </style>
 
     <style name="OrderMoreStyle">
+        <item name="android:layout_margin">@dimen/button_margin</item>
+        <item name="android:paddingLeft">@dimen/save_button_padding_left</item>
+        <item name="android:paddingRight">@dimen/save_button_padding_right</item>
         <item name="android:text">@string/order_more_button_text</item>
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textColor">@color/save_button_text_color</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:background">@color/transparent</item>
+        <item name="android:background">@color/colorAccent</item>
     </style>
 
     <style name="SaveButtonStyle">
+        <item name="android:layout_margin">@dimen/button_margin</item>
         <item name="android:text">@string/save_button_text</item>
         <item name="android:textColor">@color/save_button_text_color</item>
         <item name="android:paddingLeft">@dimen/save_button_padding_left</item>
@@ -85,6 +89,15 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="ChooseExistingButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:text">@string/choose_existing</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
     <style name="TouchImageTextStyle">
@@ -98,6 +111,8 @@
     <style name="ItemDetailDeleteButtonStyle">
         <item name="android:text">@string/delete_button_text</item>
         <item name="android:textColor">@color/delete_button_text</item>
+        <item name="android:textSize">@dimen/delete_button_text_size</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:background">@color/transparent</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
