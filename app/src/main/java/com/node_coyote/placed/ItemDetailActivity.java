@@ -269,6 +269,9 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             File photo = null;
             try {
                 photo = createImageFile();
+                Uri uri = FileProvider.getUriForFile(this, PlacedContract.CONTENT_AUTHORITY, photo);
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error while saving photo", e);
             }
@@ -320,10 +323,11 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 Uri path = data.getData();
                 Log.v("PATH", path.toString());
                 mCurrentPhotoPath = path.toString();
-                setPicture();
-                addGalleryPic();
             }
         }
+//        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+//
+//        }
     }
 
     private void setPicture(){
@@ -513,8 +517,10 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             double price = cursor.getDouble(priceColumnIndex);
             String image = cursor.getString(imageColumnIndex);
 
-            Uri imageUri =  Uri.parse(image);
-            mInventoryImageButton.setImageBitmap(getBitmapFromUri(imageUri));
+            if (image != null) {
+                Uri imageUri = Uri.parse(image);
+                mInventoryImageButton.setImageBitmap(getBitmapFromUri(imageUri));
+            }
 
             // Update UI
             mNameEditText.setText(name);
@@ -530,6 +536,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         mNameEditText.setText("");
         mQuantityEditText.setText("");
         mPriceEditText.setText("");
+        mCurrentPhotoPath = "";
     }
 
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
