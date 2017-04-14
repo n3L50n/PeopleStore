@@ -12,11 +12,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -30,15 +27,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.node_coyote.placed.dataPackage.PlacedContract;
 import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
 
-import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 
 /**
  * Created by node_coyote on 4/8/17.
@@ -46,17 +38,10 @@ import java.util.Date;
 
 public class ItemDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String LOG_TAG = ItemDetailActivity.class.getSimpleName();
-
     /**
      * Identifier for the image directory opener intent
      */
     static final int CHOOSE_IMAGE_REQUEST = 0;
-
-    /**
-     * Identifier for the camera intent
-     */
-    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     /**
      * Identifier for item data loader
@@ -87,11 +72,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
      * A button to take a photo and an ImageView to show a chosen photo
      */
     private ImageButton mInventoryImageButton;
-
-    /**
-     * A button to choose an existing photo
-     */
-    private Button mChooseExistingButton;
 
     /**
      * Variable to help saveItem method determine if fields have been filled out
@@ -130,7 +110,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         Button subtractOne = (Button) findViewById(R.id.subtract_one_button);
         Button addMore = (Button) findViewById(R.id.add_one_button);
         mInventoryImageButton = (ImageButton) findViewById(R.id.product_image_view);
-        mChooseExistingButton = (Button) findViewById(R.id.choose_existing_photo);
 
 
         // If there isn't an id, let's create a new item
@@ -236,8 +215,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             }
         });
 
-        // Touching the button will open the image directory
-        mChooseExistingButton.setOnClickListener(new View.OnClickListener() {
+        mInventoryImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent;
@@ -251,67 +229,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 startActivityForResult(Intent.createChooser(intent, "Choose Picture"), CHOOSE_IMAGE_REQUEST);
             }
         });
-
-        mInventoryImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takeInventoryPhoto();
-
-            }
-        });
-    }
-
-    private void takeInventoryPhoto(){
-        Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (pictureIntent.resolveActivity(getPackageManager()) != null) {
-
-            // Create the File for where the photo should go
-            File photo = null;
-            try {
-                photo = createImageFile();
-                Uri uri = FileProvider.getUriForFile(this, PlacedContract.CONTENT_AUTHORITY, photo);
-                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error while saving photo", e);
-            }
-            if (photo != null){
-                Uri photoUri = FileProvider.getUriForFile(this, PlacedContract.CONTENT_AUTHORITY, photo);
-                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(pictureIntent, REQUEST_IMAGE_CAPTURE);
-                setPicture();
-            }
-        }
-    }
-
-    private File createImageFile() throws IOException {
-
-        // Create a collision-resistant name for the image file
-        String timeStamp = new SimpleDateFormat("yyyymmdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        // Get the file storage available to all apps. Deleted if user deletes app
-        File storageFileDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName, // This is the prefix
-                ".jpg",          // We'll save it as a jpg
-                storageFileDirectory // Store it here
-        );
-        // set the image path. we can use it with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-
-        // Save the photo path to the data base
-        ContentValues values = new ContentValues();
-        values.put(PlacedEntry.COLUMN_PRODUCT_IMAGE, mCurrentPhotoPath);
-
-        return image;
-    }
-
-    private void addGalleryPic(){
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File file = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(file);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
     }
 
     // looked at Google documentation and Carlos' https://github.com/crlsndrsjmnz/MyFileProviderExample
@@ -325,32 +242,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 mCurrentPhotoPath = path.toString();
             }
         }
-//        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
-//
-//        }
-    }
-
-    private void setPicture(){
-        // get dimensions of View
-        int targetWidth = mInventoryImageButton.getWidth();
-        int targetHeight = mInventoryImageButton.getHeight();
-
-        // get dimensions of bitmap
-        BitmapFactory.Options bitMapOptions = new BitmapFactory.Options();
-        bitMapOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bitMapOptions);
-        int photoWidth = bitMapOptions.outWidth;
-        int photoHeight = bitMapOptions.outHeight;
-
-        // determine image scale down
-        int scaleFactor = Math.min(photoWidth/targetWidth, photoHeight/targetHeight);
-
-        // decode image file into a Bitmap sized to fill the view
-        bitMapOptions.inJustDecodeBounds = false;
-        bitMapOptions.inSampleSize = scaleFactor;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bitMapOptions);
-        mInventoryImageButton.setImageBitmap(bitmap);
     }
 
     // looked at Google documentation and Carlos' https://github.com/crlsndrsjmnz/MyFileProviderExample
@@ -406,7 +297,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         ContentValues values = new ContentValues();
 
         // If something is in the name field, it can be saved
-        if (!TextUtils.isEmpty(nameString)){
+        if (!TextUtils.isEmpty(nameString)) {
             nameEntered = true;
         }
 
@@ -473,7 +364,6 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             // Show an unsaved changes dialog
             showUnsavedChangesDialog(discardButtonClickListener);
         }
-
 
 
     }
@@ -631,6 +521,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     /**
      * Use these 3 methods to handle the Up button save case.
      * I'd like to prevent users from exiting with unsaved changes.
+     *
      * @param menu
      * @return
      */
@@ -650,10 +541,10 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         switch (menuItem.getItemId()) {
             case android.R.id.home:
                 if (!mItemHasChanged) {
-                        NavUtils.navigateUpFromSameTask(ItemDetailActivity.this);
-                        return true;
+                    NavUtils.navigateUpFromSameTask(ItemDetailActivity.this);
+                    return true;
                 }
-                if (!mSaveHasBeenPushed){
+                if (!mSaveHasBeenPushed) {
                     // If so, let's pop up a dialog
                     DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
                         @Override
