@@ -27,7 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
+import com.node_coyote.placed.dataPackage.PeopleStoreContract.PeopleStoreEntry;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.io.IOException;
  * Created by node_coyote on 4/8/17.
  */
 
-public class ItemDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class PeopleStoreDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Identifier for the image directory opener intent
@@ -133,15 +133,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveItem();
-            }
-        });
-
-        Button orderMoreButton = (Button) findViewById(R.id.order_more_button);
-        orderMoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                orderMore(new String[]{String.valueOf(R.string.email_address)}, String.valueOf(R.string.email_text));
+                saveContact();
             }
         });
 
@@ -169,7 +161,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                     quantity--;
                     String newQuantity = Integer.toString(quantity);
                     ContentValues values = new ContentValues();
-                    values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+                    values.put(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY, quantity);
 
                     int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
                     if (rows != 0) {
@@ -203,9 +195,9 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
                 String newQuantity = Integer.toString(quantity);
 
                 // Pass along the new value
-                values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
+                values.put(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
 
-                values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, Double.parseDouble(mPriceEditText.getText().toString()));
+                values.put(PeopleStoreEntry.COLUMN_PRODUCT_PRICE, Double.parseDouble(mPriceEditText.getText().toString()));
 
                 int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
                 if (rows != 0) {
@@ -271,9 +263,9 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     }
 
     /**
-     * Get user input from editor and save item to database
+     * Get user input from editor and save contact to database
      */
-    private void saveItem() {
+    private void saveContact() {
 
         // Create checks for each required field. I do not require an image.
         boolean nameEntered = false;
@@ -301,7 +293,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             nameEntered = true;
         }
 
-        values.put(PlacedEntry.COLUMN_PRODUCT_NAME, nameString);
+        values.put(PeopleStoreEntry.COLUMN_PRODUCT_NAME, nameString);
 
         // Let's set quantity to 0 by default, then check if the field is empty
         // If something is in the quantity field, it can be saved
@@ -310,7 +302,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             quantity = Integer.parseInt(quantityString);
             quantityEntered = true;
         }
-        values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+        values.put(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY, quantity);
 
         // Let's set a price of 0.00, then check if the field is empty
         // if something is in the price field, it can be saved
@@ -320,8 +312,8 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
             priceEntered = true;
         }
 
-        values.put(PlacedEntry.COLUMN_PRODUCT_PRICE, price);
-        values.put(PlacedEntry.COLUMN_PRODUCT_IMAGE, mCurrentPhotoPath);
+        values.put(PeopleStoreEntry.COLUMN_PRODUCT_PRICE, price);
+        values.put(PeopleStoreEntry.COLUMN_PRODUCT_IMAGE, mCurrentPhotoPath);
 
         // If all the 3 fields name, quantity, and price have something in them, proceed
         if (nameEntered && quantityEntered && priceEntered) {
@@ -331,7 +323,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
             // Check if this is an add or an update
             if (mCurrentItemUri == null) {
-                Uri newUri = getContentResolver().insert(PlacedEntry.CONTENT_URI, values);
+                Uri newUri = getContentResolver().insert(PeopleStoreEntry.CONTENT_URI, values);
 
                 // Let's show a toast of whether or not the save was successful
                 if (newUri == null) {
@@ -372,11 +364,11 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         String[] projection = {
-                PlacedEntry._ID,
-                PlacedEntry.COLUMN_PRODUCT_NAME,
-                PlacedEntry.COLUMN_PRODUCT_QUANTITY,
-                PlacedEntry.COLUMN_PRODUCT_PRICE,
-                PlacedEntry.COLUMN_PRODUCT_IMAGE
+                PeopleStoreEntry._ID,
+                PeopleStoreEntry.COLUMN_PRODUCT_NAME,
+                PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY,
+                PeopleStoreEntry.COLUMN_PRODUCT_PRICE,
+                PeopleStoreEntry.COLUMN_PRODUCT_IMAGE
         };
 
         return new CursorLoader(this,
@@ -396,10 +388,10 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
 
         if (cursor.moveToFirst()) {
             // Find columns with item attributes
-            int nameColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_NAME);
-            int quantityColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_QUANTITY);
-            int priceColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_PRICE);
-            int imageColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_IMAGE);
+            int nameColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_NAME);
+            int quantityColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY);
+            int priceColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_PRICE);
+            int imageColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_IMAGE);
 
             // Get the values from the cursor
             String name = cursor.getString(nameColumnIndex);
@@ -541,7 +533,7 @@ public class ItemDetailActivity extends AppCompatActivity implements LoaderManag
         switch (menuItem.getItemId()) {
             case android.R.id.home:
                 if (!mItemHasChanged) {
-                    NavUtils.navigateUpFromSameTask(ItemDetailActivity.this);
+                    NavUtils.navigateUpFromSameTask(PeopleStoreDetailActivity.this);
                     return true;
                 }
                 if (!mSaveHasBeenPushed) {

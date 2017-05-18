@@ -14,15 +14,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
+import com.node_coyote.placed.dataPackage.PeopleStoreContract.PeopleStoreEntry;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    /** Used as identifier for the item loader data. int can be arbitrary **/
-    private static final int ITEM_LOADER = 42;
+    /** Used as identifier for the contact loader data. int can be arbitrary **/
+    private static final int CONTACT_LOADER = 42;
 
     /** Our list view adapter **/
-    PlacedCursorAdapter mCursorAdapter;
+    PeopleStoreCursorAdapter mCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ItemDetailActivity.class);
+                Intent intent = new Intent(MainActivity.this, PeopleStoreDetailActivity.class);
                 startActivity(intent);
             }
         });
@@ -45,15 +45,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         View emptyView = findViewById(R.id.empty_view);
         itemListView.setEmptyView(emptyView);
 
-        mCursorAdapter = new PlacedCursorAdapter(this, null);
+        mCursorAdapter = new PeopleStoreCursorAdapter(this, null);
         itemListView.setAdapter(mCursorAdapter);
 
         itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, ItemDetailActivity.class);
+                Intent intent = new Intent(MainActivity.this, PeopleStoreDetailActivity.class);
 
-                Uri currentItemUri = ContentUris.withAppendedId(PlacedEntry.CONTENT_URI, id);
+                Uri currentItemUri = ContentUris.withAppendedId(PeopleStoreEntry.CONTENT_URI, id);
 
                 intent.setData(currentItemUri);
 
@@ -61,22 +61,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        getLoaderManager().initLoader(ITEM_LOADER, null, this);
+        getLoaderManager().initLoader(CONTACT_LOADER, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Defines projection specifying columns from table
         String[] projection = {
-                PlacedEntry._ID,
-                PlacedEntry.COLUMN_PRODUCT_NAME,
-                PlacedEntry.COLUMN_PRODUCT_QUANTITY,
-                PlacedEntry.COLUMN_PRODUCT_PRICE
+                PeopleStoreEntry._ID,
+                PeopleStoreEntry.COLUMN_FIRST_NAME,
+                PeopleStoreEntry.COLUMN_LAST_NAME,
+                PeopleStoreEntry.COLUMN_ZIP
         };
 
         // Loader to execute Content Provider's query method on background thread
         return new CursorLoader(this,
-                PlacedEntry.CONTENT_URI,
+                PeopleStoreEntry.CONTENT_URI,
                 projection,
                 null,
                 null,

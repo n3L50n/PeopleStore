@@ -11,25 +11,25 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
+import com.node_coyote.placed.dataPackage.PeopleStoreContract.PeopleStoreEntry;
 
 /**
- * Created by node_coyote on 4/7/17.
+ * Created by node_coyote on 5/17/17.
  */
 
 /**
- * {@link ContentProvider} for Placed app
+ * {@link ContentProvider} for PeopleStore app
  */
-public class PlacedProvider extends ContentProvider {
+public class PeopleStoreProvider extends ContentProvider {
 
     /** tag for log messages **/
-    public static final String LOG_TAG = PlacedProvider.class.getSimpleName();
+    public static final String LOG_TAG = PeopleStoreProvider.class.getSimpleName();
 
-    /** uri matcher code for the content uri for the inventory table **/
-    private static final int INVENTORY = 42;
+    /** uri matcher code for the content uri for the contacts table **/
+    private static final int CONTACTS = 42;
 
-    /** uri matcher code for the content uri for a single inventory item in the inventory table **/
-    private static final int INVENTORY_ID = 9;
+    /** uri matcher code for the content uri for a single contact item in the people store table **/
+    private static final int CONTACT_ID = 9;
 
     /**
      * UriMatcher object to match a content uri to a code
@@ -40,16 +40,16 @@ public class PlacedProvider extends ContentProvider {
      *
      */
     static{
-        sMatcher.addURI(PlacedContract.CONTENT_AUTHORITY, PlacedContract.PATH_INVENTORY, INVENTORY);
-        sMatcher.addURI(PlacedContract.CONTENT_AUTHORITY, PlacedContract.PATH_INVENTORY + "/#", INVENTORY_ID);
+        sMatcher.addURI(PeopleStoreContract.CONTENT_AUTHORITY, PeopleStoreContract.PATH_CONTACTS, CONTACTS);
+        sMatcher.addURI(PeopleStoreContract.CONTENT_AUTHORITY, PeopleStoreContract.PATH_CONTACTS + "/#", CONTACT_ID);
     }
 
     /** A database helper object **/
-    private PlacedDatabaseHelper mHelper;
+    private PeopleStoreDatabaseHelper mHelper;
 
     @Override
     public boolean onCreate() {
-            mHelper = new PlacedDatabaseHelper(getContext());
+            mHelper = new PeopleStoreDatabaseHelper(getContext());
         return true;
     }
 
@@ -65,15 +65,15 @@ public class PlacedProvider extends ContentProvider {
         // match uri to code
         int match = sMatcher.match(uri);
         switch (match) {
-            case INVENTORY:
+            case CONTACTS:
                 // query inventory table directly
-                cursor = database.query(PlacedContract.PlacedEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                cursor = database.query(PeopleStoreEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
-            case INVENTORY_ID:
+            case CONTACT_ID:
                 // query a row by id
-                selection = PlacedEntry._ID + "=?";
+                selection = PeopleStoreEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
-                cursor = database.query(PlacedContract.PlacedEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                cursor = database.query(PeopleStoreEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI" + uri);
@@ -90,10 +90,10 @@ public class PlacedProvider extends ContentProvider {
     public String getType(@NonNull Uri uri) {
         final int match = sMatcher.match(uri);
         switch (match) {
-            case INVENTORY:
-                return PlacedEntry.CONTENT_LIST_TYPE;
-            case INVENTORY_ID:
-                return PlacedEntry.CONTENT_ITEM_TYPE;
+            case CONTACTS:
+                return PeopleStoreEntry.CONTENT_LIST_TYPE;
+            case CONTACT_ID:
+                return PeopleStoreEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalStateException("Unknown uri " + uri + " with match " + match);
         }
@@ -105,7 +105,7 @@ public class PlacedProvider extends ContentProvider {
         // Insert a new item into the inventory
         final int match = sMatcher.match(uri);
         switch (match) {
-            case INVENTORY:
+            case CONTACTS:
                 return insertItem(uri, values);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
@@ -113,36 +113,47 @@ public class PlacedProvider extends ContentProvider {
     }
 
     /**
-     * Helper method to insert a new item into the database
+     * Helper method to insert a new contact into the database
      * @param uri
      * @param values
      * @return new content uri for that specific row in the database
      */
     public Uri insertItem(Uri uri, ContentValues values){
 
-        // Let's check if the product name is null
-        String name = values.getAsString(PlacedEntry.COLUMN_PRODUCT_NAME);
-        if (name == null){
-            throw new IllegalArgumentException("All inventory items need a name");
+        // Let's check if the contact first name is null
+        String firstName = values.getAsString(PeopleStoreEntry.COLUMN_FIRST_NAME);
+        if (firstName == null){
+            throw new IllegalArgumentException("All contacts need a first name");
         }
 
-        // We should make sure the quantity doesn't go below 0. We don't want a negative inventory
-        Integer quantity = values.getAsInteger(PlacedEntry.COLUMN_PRODUCT_QUANTITY);
-        if (quantity != null && quantity < 0){
-            throw new IllegalArgumentException("Our inventory should not be empty or negative");
+        // Let's check if the contact last name is null
+        String lastName = values.getAsString(PeopleStoreEntry.COLUMN_LAST_NAME);
+        if (lastName == null){
+            throw new IllegalArgumentException("All contacts need a last name");
         }
 
-        // The price should also not go below 0.00
-        Double price = values.getAsDouble(PlacedEntry.COLUMN_PRODUCT_PRICE);
-        if (price != null && price < 0){
-            throw new IllegalArgumentException("Our prices should not be empty or in the negative");
+        Integer zip = values.getAsInteger(PeopleStoreEntry.COLUMN_ZIP);
+        if (zip != null && zip < 0){
+            throw new IllegalArgumentException("Zip should not be empty or negative");
+        }
+
+        // Let's check if the contact date of birth is null
+        String birth = values.getAsString(PeopleStoreEntry.COLUMN_BIRTH);
+        if (birth == null ){
+            throw new IllegalArgumentException("Birth should not be empty");
+        }
+
+        // Let's check if the contact phone number is null
+        String number = values.getAsString(PeopleStoreEntry.COLUMN_PHONE_NUMBER);
+        if (number == null ){
+            throw new IllegalArgumentException("Phone number should not be empty");
         }
 
         // Get writable database
         SQLiteDatabase database = mHelper.getWritableDatabase();
 
-        // insert new pet with given values
-        long id = database.insert(PlacedEntry.TABLE_NAME, null, values);
+        // insert new contact with given values
+        long id = database.insert(PeopleStoreEntry.TABLE_NAME, null, values);
 
         // Insertion fails if id is -1. Log it with error and return null
         if (id == -1){
@@ -166,15 +177,15 @@ public class PlacedProvider extends ContentProvider {
 
         final int match = sMatcher.match(uri);
         switch (match) {
-            case INVENTORY:
+            case CONTACTS:
                 // Delete all rows that match selection and selectionArgs
-                deletedRows = database.delete(PlacedEntry.TABLE_NAME, selection, selectionArgs);
+                deletedRows = database.delete(PeopleStoreEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-            case INVENTORY_ID:
+            case CONTACT_ID:
                 // Delete single row given by id in the uri
-                selection = PlacedEntry._ID + "=?";
+                selection = PeopleStoreEntry._ID + "=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri)) };
-                deletedRows = database.delete(PlacedEntry.TABLE_NAME, selection, selectionArgs);
+                deletedRows = database.delete(PeopleStoreEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Deletion not supported for " + uri);
@@ -192,11 +203,11 @@ public class PlacedProvider extends ContentProvider {
         final int match = sMatcher.match(uri);
         // let's check if this case is updating the whole database or a row
         switch (match) {
-            case INVENTORY:
+            case CONTACTS:
                 return updateItem(uri, values, selection, selectionArgs);
-            case INVENTORY_ID:
+            case CONTACT_ID:
                 // let's pull out the id from the uri so we know which row to update
-                selection = PlacedEntry._ID + "=?";
+                selection = PeopleStoreEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
                 return updateItem(uri, values, selection, selectionArgs);
             default:
@@ -214,26 +225,41 @@ public class PlacedProvider extends ContentProvider {
      */
     public int updateItem(Uri uri, ContentValues values, String selection, String[] selectionArgs){
         // Let's validate our values. Valuedate.
-        if (values.containsKey(PlacedEntry.COLUMN_PRODUCT_NAME)) {
-            String name = values.getAsString(PlacedEntry.COLUMN_PRODUCT_NAME);
-            if (name == null){
-                throw new IllegalArgumentException("Items require a name");
+        if (values.containsKey(PeopleStoreEntry.COLUMN_FIRST_NAME)) {
+            String firstName = values.getAsString(PeopleStoreEntry.COLUMN_FIRST_NAME);
+            if (firstName == null){
+                throw new IllegalArgumentException("PeopleStore contacts require a first name");
             }
         }
 
-        if (values.containsKey(PlacedEntry.COLUMN_PRODUCT_QUANTITY)) {
-            Integer quantity = values.getAsInteger(PlacedEntry.COLUMN_PRODUCT_QUANTITY);
-            if (quantity != null && quantity < 0){
-                throw new IllegalArgumentException("Items require a valid quantity");
+        if (values.containsKey(PeopleStoreEntry.COLUMN_LAST_NAME)) {
+            String lastName = values.getAsString(PeopleStoreEntry.COLUMN_LAST_NAME);
+            if (lastName == null){
+                throw new IllegalArgumentException("PeopleStore contacts require a last name");
             }
         }
 
-        if (values.containsKey(PlacedEntry.COLUMN_PRODUCT_PRICE)) {
-            Double price = values.getAsDouble(PlacedEntry.COLUMN_PRODUCT_PRICE);
-            if (price != null && price < 0.00){
-                throw new IllegalArgumentException("Items require a valid price");
+        if (values.containsKey(PeopleStoreEntry.COLUMN_ZIP)) {
+            Integer zip = values.getAsInteger(PeopleStoreEntry.COLUMN_ZIP);
+            if (zip != null){
+                throw new IllegalArgumentException("PeopleStore contacts require a zip");
             }
         }
+
+        if (values.containsKey(PeopleStoreEntry.COLUMN_BIRTH)) {
+            String birth = values.getAsString(PeopleStoreEntry.COLUMN_BIRTH);
+            if (birth == null){
+                throw new IllegalArgumentException("PeopleStore contacts require birth date");
+            }
+        }
+
+        if (values.containsKey(PeopleStoreEntry.COLUMN_PHONE_NUMBER)) {
+            String number = values.getAsString(PeopleStoreEntry.COLUMN_PHONE_NUMBER);
+            if (number == null){
+                throw new IllegalArgumentException("PeopleStore contacts require a phone number");
+            }
+        }
+
 
         if (values.size() == 0) {
             return 0;
@@ -241,7 +267,7 @@ public class PlacedProvider extends ContentProvider {
 
         SQLiteDatabase database = mHelper.getWritableDatabase();
 
-        int updatedRows = database.update(PlacedEntry.TABLE_NAME, values, selection, selectionArgs);
+        int updatedRows = database.update(PeopleStoreEntry.TABLE_NAME, values, selection, selectionArgs);
 
         if (updatedRows != 0 ){
             getContext().getContentResolver().notifyChange(uri, null);

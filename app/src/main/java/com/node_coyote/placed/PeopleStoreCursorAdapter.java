@@ -13,15 +13,15 @@ import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import com.node_coyote.placed.dataPackage.PlacedContract.PlacedEntry;
+import com.node_coyote.placed.dataPackage.PeopleStoreContract.PeopleStoreEntry;
 
 /**
  * Created by node_coyote on 4/8/17.
  */
 
-public class PlacedCursorAdapter extends CursorAdapter {
+public class PeopleStoreCursorAdapter extends CursorAdapter {
 
-    public PlacedCursorAdapter(Context context, Cursor c) {
+    public PeopleStoreCursorAdapter(Context context, Cursor c) {
         super(context, c, 0);
     }
 
@@ -54,10 +54,10 @@ public class PlacedCursorAdapter extends CursorAdapter {
         Button markSoldButton = (Button) view.findViewById(R.id.mark_sold_button);
 
         // Find the Columns to grab data
-        int nameColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_NAME);
-        int quantityColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_QUANTITY);
-        int priceColumnIndex = cursor.getColumnIndex(PlacedEntry.COLUMN_PRODUCT_PRICE);
-        int idColumnIndex = cursor.getColumnIndex(PlacedEntry._ID);
+        int nameColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_NAME);
+        int quantityColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY);
+        int priceColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_PRICE);
+        int idColumnIndex = cursor.getColumnIndex(PeopleStoreEntry._ID);
 
         // Read attributes from Cursor for current inventory item
         String name = cursor.getString(nameColumnIndex);
@@ -75,12 +75,12 @@ public class PlacedCursorAdapter extends CursorAdapter {
                     ContentValues values = new ContentValues();
                 if (quantity > 0){
                     int newQuantity = (quantity - 1);
-                    values.put(PlacedEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
-                    Uri uri = ContentUris.withAppendedId(PlacedEntry.CONTENT_URI, currentId);
+                    values.put(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
+                    Uri uri = ContentUris.withAppendedId(PeopleStoreEntry.CONTENT_URI, currentId);
                     context.getContentResolver().update(uri, values, null, null);
                 }
                 // Notify of updated content
-                context.getContentResolver().notifyChange(PlacedEntry.CONTENT_URI, null);
+                context.getContentResolver().notifyChange(PeopleStoreEntry.CONTENT_URI, null);
 
             }
         });

@@ -29,10 +29,6 @@
             android:id="@+id/save_button"
             style="@style/SaveButtonStyle" />
 
-        <Button
-            android:id="@+id/order_more_button"
-            style="@style/OrderMoreStyle"/>
-
     </LinearLayout>
 
     <LinearLayout
