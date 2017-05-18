@@ -18,17 +18,17 @@
         <item name="android:src">@drawable/ic_add_item_fab</item>
     </style>
 
-    <!--Item Detail Styles-->
-    <style name="EditProductNameStyle">
-        <item name="android:hint">@string/enter_product_name_hint</item>
+    <!--Contact Detail Styles-->
+    <style name="EditContactNameStyle">
+        <item name="android:hint">@string/enter_contact_first_name_hint</item>
         <item name="android:inputType">text</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
-    <style name="EditProductQuantityStyle">
-        <item name="android:hint">@string/enter_product_quantity_hint</item>
+    <style name="EditZipStyle">
+        <item name="android:hint">@string/enter_contact_zip_hint</item>
         <item name="android:inputType">number</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center_horizontal</item>
@@ -36,45 +36,22 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="EditProductPriceStyle">
-        <item name="android:inputType">numberDecimal</item>
+    <style name="EditContactNumberStyle">
+        <item name="android:inputType">phone</item>
         <item name="android:gravity">center</item>
-        <item name="android:hint">@string/enter_product_price_hint</item>
+        <item name="android:hint">@string/enter_contact_number_hint</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
-    <style name="AddOneButtonStyle">
-        <item name="android:background">@color/transparent</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:text">@string/add_one_text</item>
-        <item name="android:textSize">@dimen/add_subtract_text_size</item>
-        <item name="android:focusable">false</item>
-        <item name="android:focusableInTouchMode">false</item>
-    </style>
-
-    <style name="SubtractOneButtonStyle">
-        <item name="android:background">@color/transparent</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:text">@string/subtract_one_text</item>
-        <item name="android:textSize">@dimen/add_subtract_text_size</item>
-        <item name="android:focusable">false</item>
-        <item name="android:focusableInTouchMode">false</item>
-    </style>
-
-    <style name="OrderMoreStyle">
-        <item name="android:layout_margin">@dimen/button_margin</item>
-        <item name="android:paddingLeft">@dimen/save_button_padding_left</item>
-        <item name="android:paddingRight">@dimen/save_button_padding_right</item>
-        <item name="android:text">@string/order_more_button_text</item>
-        <item name="android:textColor">@color/save_button_text_color</item>
+    <style name="EditContactBirthStyle">
+        <item name="android:inputType">text</item>
+        <item name="android:gravity">center</item>
+        <item name="android:hint">@string/enter_contact_birth</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:background">@color/colorAccent</item>
     </style>
 
     <style name="SaveButtonStyle">
@@ -111,34 +88,22 @@
     </style>
 
     <!--List Item Styles-->
-    <style name="ListItemNameStyle">
+    <style name="ListItemFirstNameStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/list_item_product_name</item>
+        <item name="android:textColor">@color/list_item_contact_first_name</item>
     </style>
 
-    <style name="ListItemQuantityStyle">
+    <style name="ListItemLastNameStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/list_item_product_quantity</item>
+        <item name="android:textColor">@color/list_item_contact_last_name</item>
     </style>
 
-    <style name="ListItemPriceStyle">
-        <item name="android:textColor">@color/list_item_product_price</item>
+    <style name="ListItemZipStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="ListItemSaleButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_toRightOf">@+id/list_item_text_layout</item>
-        <item name="android:layout_alignParentRight">true</item>
-        <item name="android:layout_marginRight">@dimen/list_item_margin</item>
-        <item name="android:focusable">false</item>
-        <item name="android:focusableInTouchMode">false</item>
-        <item name="android:background">@color/transparent</item>
-        <item name="android:text">@string/mark_one_sold</item>
+        <item name="android:textColor">@color/list_item_product_zip</item>
     </style>
 
     <!--Empty View Styles-->

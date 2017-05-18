@@ -241,7 +241,7 @@ public class PeopleStoreProvider extends ContentProvider {
 
         if (values.containsKey(PeopleStoreEntry.COLUMN_ZIP)) {
             Integer zip = values.getAsInteger(PeopleStoreEntry.COLUMN_ZIP);
-            if (zip != null){
+            if (zip == null){
                 throw new IllegalArgumentException("PeopleStore contacts require a zip");
             }
         }

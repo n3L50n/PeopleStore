@@ -48,46 +48,31 @@ public class PeopleStoreCursorAdapter extends CursorAdapter {
 
 
         // Find views to modify
-        TextView productNameView = (TextView) view.findViewById(R.id.product_name_text);
-        TextView productQuantityView = (TextView) view.findViewById(R.id.product_quantity_text);
-        TextView productPriceView = (TextView) view.findViewById(R.id.product_price_text);
-        Button markSoldButton = (Button) view.findViewById(R.id.mark_sold_button);
+        TextView contactFirstNameView = (TextView) view.findViewById(R.id.contact_first_name_text);
+        TextView contactLastNameView = (TextView) view.findViewById(R.id.contact_last_name_text);
+        TextView contactZipView = (TextView) view.findViewById(R.id.zip_text);
 
         // Find the Columns to grab data
-        int nameColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_NAME);
-        int quantityColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY);
-        int priceColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_PRICE);
-        int idColumnIndex = cursor.getColumnIndex(PeopleStoreEntry._ID);
+        int firstNameColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_FIRST_NAME);
+        int lastNameColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_LAST_NAME);
+        int zipColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_ZIP);
 
         // Read attributes from Cursor for current inventory item
-        String name = cursor.getString(nameColumnIndex);
-        final int quantity = cursor.getInt(quantityColumnIndex);
-        double price = cursor.getDouble(priceColumnIndex);
-        final long currentId = cursor.getLong(idColumnIndex);
+        String firstName = cursor.getString(firstNameColumnIndex);
+        String lastName = cursor.getString(lastNameColumnIndex);
+        final int zip = cursor.getInt(zipColumnIndex);
 
-        if (TextUtils.isEmpty(name)){
-            name = context.getString(R.string.empty_name);
+        if (TextUtils.isEmpty(firstName)){
+            firstName = context.getString(R.string.empty_first_name);
         }
 
-        markSoldButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    ContentValues values = new ContentValues();
-                if (quantity > 0){
-                    int newQuantity = (quantity - 1);
-                    values.put(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
-                    Uri uri = ContentUris.withAppendedId(PeopleStoreEntry.CONTENT_URI, currentId);
-                    context.getContentResolver().update(uri, values, null, null);
-                }
-                // Notify of updated content
-                context.getContentResolver().notifyChange(PeopleStoreEntry.CONTENT_URI, null);
-
-            }
-        });
+        if (TextUtils.isEmpty(lastName)){
+            lastName = context.getString(R.string.empty_last_name);
+        }
 
         // update UI
-        productNameView.setText(name);
-        productQuantityView.setText(String.valueOf(quantity));
-        productPriceView.setText(String.valueOf(price));
+        contactFirstNameView.setText(firstName);
+        contactLastNameView.setText(lastName);
+        contactZipView.setText(String.valueOf(zip));
     }
 }

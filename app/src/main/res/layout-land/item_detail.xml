@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:baselineAligned="false"
@@ -14,16 +13,24 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/edit_product_name_text_view"
-            style="@style/EditProductNameStyle"
-            tools:text="@string/product_name_tool_text" />
-
-        <include layout="@layout/quantity_buttons_layout" />
+            android:id="@+id/edit_contact_first_name_text_view"
+            style="@style/EditContactNameStyle" />
 
         <EditText
-            android:id="@+id/edit_product_price_text_view"
-            style="@style/EditProductPriceStyle"
-            tools:text="@string/product_price_tool_text" />
+            android:id="@+id/edit_contact_last_name_text_view"
+            style="@style/EditContactNameStyle" />
+
+        <EditText
+            android:id="@+id/edit_zip_text_view"
+            style="@style/EditZipStyle" />
+
+        <EditText
+            android:id="@+id/edit_number_text_view"
+            style="@style/EditContactNumberStyle"/>
+
+        <EditText
+            android:id="@+id/edit_birth_text_view"
+            style="@style/EditContactBirthStyle"/>
 
         <Button
             android:id="@+id/save_button"

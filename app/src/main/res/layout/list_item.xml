@@ -1,39 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:padding="@dimen/list_item_padding">
 
     <LinearLayout
-        android:layout_weight="1"
         android:id="@+id/list_item_text_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/list_item_margin"
+        android:layout_marginStart="@dimen/list_item_margin"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/product_name_text"
-            style="@style/ListItemNameStyle"
-            tool:text="@string/list_item_product_tool" />
+            android:id="@+id/contact_first_name_text"
+            style="@style/ListItemFirstNameStyle" />
 
         <TextView
-            android:id="@+id/product_quantity_text"
-            style="@style/ListItemQuantityStyle"
-            tool:text="@string/list_item_quantity_tool" />
+            android:id="@+id/contact_last_name_text"
+            style="@style/ListItemLastNameStyle" />
 
         <TextView
-            android:id="@+id/product_price_text"
-            style="@style/ListItemPriceStyle"
-            tool:text="@string/list_item_price_tool" />
+            android:id="@+id/zip_text"
+            style="@style/ListItemZipStyle" />
 
     </LinearLayout>
-
-    <Button
-        android:layout_weight="1"
-        android:id="@+id/mark_sold_button"
-        style="@style/ListItemSaleButton" />
 
 </LinearLayout>

@@ -46,7 +46,7 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
     /**
      * Identifier for item data loader
      **/
-    private static final int EXISTING_ITEM_LOADER = 42;
+    private static final int EXISTING_CONTACT_LOADER = 42;
 
     /**
      * Content uri for an existing item in the inventory
@@ -54,19 +54,29 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
     private Uri mCurrentItemUri;
 
     /**
-     * EditText field for product name
+     * EditText field for first name
      **/
-    private EditText mNameEditText;
+    private EditText mFirstNameEditText;
 
     /**
-     * EditText field for product quantity
+     * EditText field for last name
      **/
-    private EditText mQuantityEditText;
+    private EditText mLastNameEditText;
 
     /**
-     * EditText field for product price
+     * EditText field for zip
      **/
-    private EditText mPriceEditText;
+    private EditText mZipEditText;
+
+    /**
+     * EditText field for phone number
+     **/
+    private EditText mNumberEditText;
+
+    /**
+     * EditText field for birth date
+     **/
+    private EditText mBirthEditText;
 
     /**
      * A button to take a photo and an ImageView to show a chosen photo
@@ -74,7 +84,7 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
     private ImageButton mInventoryImageButton;
 
     /**
-     * Variable to help saveItem method determine if fields have been filled out
+     * Variable to help saveContact method determine if fields have been filled out
      */
     private boolean mSaveHasBeenPushed = false;
 
@@ -84,7 +94,7 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
     String mCurrentPhotoPath;
 
     /**
-     * Let's use a boolean to keep track of whether or not a user has edited an item
+     * Let's use a boolean to keep track of whether or not a user has edited a contact
      **/
     private boolean mItemHasChanged = false;
 
@@ -104,30 +114,29 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
         Button deleteButton = (Button) findViewById(R.id.delete_button);
-        mNameEditText = (EditText) findViewById(R.id.edit_product_name_text_view);
-        mQuantityEditText = (EditText) findViewById(R.id.edit_product_quantity_text_view);
-        mPriceEditText = (EditText) findViewById(R.id.edit_product_price_text_view);
-        Button subtractOne = (Button) findViewById(R.id.subtract_one_button);
-        Button addMore = (Button) findViewById(R.id.add_one_button);
+        mFirstNameEditText = (EditText) findViewById(R.id.edit_contact_first_name_text_view);
+        mLastNameEditText = (EditText) findViewById(R.id.edit_contact_last_name_text_view);
+        mZipEditText = (EditText) findViewById(R.id.edit_zip_text_view);
+        mNumberEditText = (EditText) findViewById(R.id.edit_number_text_view);
+        mBirthEditText = (EditText) findViewById(R.id.edit_birth_text_view);
         mInventoryImageButton = (ImageButton) findViewById(R.id.product_image_view);
-
 
         // If there isn't an id, let's create a new item
         if (mCurrentItemUri == null) {
             setTitle(R.string.item_detail_activity_add_item);
             deleteButton.setVisibility(View.GONE);
-            subtractOne.setVisibility(View.GONE);
-            addMore.setVisibility(View.GONE);
 
         } else {
             setTitle(getString(R.string.item_detail_activity_edit_item));
-            getLoaderManager().initLoader(EXISTING_ITEM_LOADER, null, this);
+            getLoaderManager().initLoader(EXISTING_CONTACT_LOADER, null, this);
         }
 
 
-        mNameEditText.setOnTouchListener(mOnTouchListener);
-        mQuantityEditText.setOnTouchListener(mOnTouchListener);
-        mPriceEditText.setOnTouchListener(mOnTouchListener);
+        mFirstNameEditText.setOnTouchListener(mOnTouchListener);
+        mLastNameEditText.setOnTouchListener(mOnTouchListener);
+        mZipEditText.setOnTouchListener(mOnTouchListener);
+        mNumberEditText.setOnTouchListener(mOnTouchListener);
+        mBirthEditText.setOnTouchListener(mOnTouchListener);
 
         Button saveButton = (Button) findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -144,68 +153,6 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
             }
         });
 
-
-        // Decrease inventory Button
-        subtractOne.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Pull out a new quantity to pass around
-                int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
-
-                // Check if the field is empty
-                if (TextUtils.isEmpty(String.valueOf(quantity))) {
-                    quantity = 0;
-                }
-
-                if (quantity > 0) {
-                    quantity--;
-                    String newQuantity = Integer.toString(quantity);
-                    ContentValues values = new ContentValues();
-                    values.put(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY, quantity);
-
-                    int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
-                    if (rows != 0) {
-                        mQuantityEditText.setText(newQuantity);
-                    }
-                }
-            }
-        });
-
-        // Increase inventory Button
-        addMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ContentValues values = new ContentValues();
-
-                // Pull out a new quantity to pass around
-                int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
-
-                // Check if the field is empty
-                if (TextUtils.isEmpty(String.valueOf(quantity))) {
-                    quantity = 0;
-                }
-
-                // Make sure we're not in the negative, then increase by 1
-                if (quantity >= 0) {
-                    quantity++;
-                }
-
-                // Send the quantity integer back to string format
-                String newQuantity = Integer.toString(quantity);
-
-                // Pass along the new value
-                values.put(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
-
-                values.put(PeopleStoreEntry.COLUMN_PRODUCT_PRICE, Double.parseDouble(mPriceEditText.getText().toString()));
-
-                int rows = getContentResolver().update(mCurrentItemUri, values, null, null);
-                if (rows != 0) {
-                    mQuantityEditText.setText(newQuantity);
-                }
-
-            }
-        });
 
         mInventoryImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,55 +215,74 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
     private void saveContact() {
 
         // Create checks for each required field. I do not require an image.
-        boolean nameEntered = false;
-        boolean quantityEntered = false;
-        boolean priceEntered = false;
+        boolean firstNameEntered = false;
+        boolean lastNameEntered = false;
+        boolean zipEntered = false;
+        boolean numberEntered = false;
+        boolean birthEntered = false;
 
         // Read from input fields then trim empty garbage
-        String nameString = mNameEditText.getText().toString().trim();
-        String quantityString = mQuantityEditText.getText().toString().trim();
-        String priceString = mPriceEditText.getText().toString().trim();
+        String firstNameString = mFirstNameEditText.getText().toString().trim();
+        String lastNameString = mLastNameEditText.getText().toString().trim();
+        String zipString = mZipEditText.getText().toString().trim();
+        String numberString = mNumberEditText.getText().toString().trim();
+        String birthString = mBirthEditText.getText().toString().trim();
 
-        // Check if this is a new item and if all fields are blank
+        // Check if this is a new contact and if all fields are blank
         if (mCurrentItemUri == null &&
-                TextUtils.isEmpty(nameString) &&
-                TextUtils.isEmpty(quantityString) &&
-                TextUtils.isEmpty(priceString)) {
+                TextUtils.isEmpty(firstNameString) &&
+                TextUtils.isEmpty(lastNameString) &&
+                TextUtils.isEmpty(zipString) &&
+                TextUtils.isEmpty(numberString) &&
+                TextUtils.isEmpty(birthString)) {
             // Jump out early. No need to run any more operations
             return;
         }
 
         ContentValues values = new ContentValues();
 
-        // If something is in the name field, it can be saved
-        if (!TextUtils.isEmpty(nameString)) {
-            nameEntered = true;
+        // If something is in the first name field, it can be saved
+        if (!TextUtils.isEmpty(firstNameString)) {
+            firstNameEntered = true;
         }
 
-        values.put(PeopleStoreEntry.COLUMN_PRODUCT_NAME, nameString);
+        values.put(PeopleStoreEntry.COLUMN_FIRST_NAME, firstNameString);
 
-        // Let's set quantity to 0 by default, then check if the field is empty
-        // If something is in the quantity field, it can be saved
-        int quantity = 0;
-        if (!TextUtils.isEmpty(quantityString)) {
-            quantity = Integer.parseInt(quantityString);
-            quantityEntered = true;
-        }
-        values.put(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY, quantity);
-
-        // Let's set a price of 0.00, then check if the field is empty
-        // if something is in the price field, it can be saved
-        double price = 0.00;
-        if (!TextUtils.isEmpty(priceString)) {
-            price = Double.parseDouble(priceString);
-            priceEntered = true;
+        // If something is in the last name field, it can be saved
+        if (!TextUtils.isEmpty(lastNameString)) {
+            lastNameEntered = true;
         }
 
-        values.put(PeopleStoreEntry.COLUMN_PRODUCT_PRICE, price);
-        values.put(PeopleStoreEntry.COLUMN_PRODUCT_IMAGE, mCurrentPhotoPath);
+        values.put(PeopleStoreEntry.COLUMN_LAST_NAME, lastNameString);
 
-        // If all the 3 fields name, quantity, and price have something in them, proceed
-        if (nameEntered && quantityEntered && priceEntered) {
+        // Let's set zip to 10101 by default, then check if the field is empty
+        // If something is in the zip field, it can be saved
+        int zip = 10101;
+        if (!TextUtils.isEmpty(zipString)) {
+            zip = Integer.parseInt(zipString);
+            zipEntered = true;
+        }
+        values.put(PeopleStoreEntry.COLUMN_ZIP, zipString);
+
+        // If something is in the phone number field, it can be saved
+        if (!TextUtils.isEmpty(numberString)) {
+            numberEntered = true;
+        }
+
+        values.put(PeopleStoreEntry.COLUMN_PHONE_NUMBER, numberString);
+
+        // If something is in the birth date field, it can be saved
+        if (!TextUtils.isEmpty(birthString)) {
+            birthEntered = true;
+        }
+
+        values.put(PeopleStoreEntry.COLUMN_BIRTH, birthString);
+
+
+        values.put(PeopleStoreEntry.COLUMN_CONTACT_IMAGE, mCurrentPhotoPath);
+
+        // If all the 5 fields first name, last name, zip, number, and birth have something in them, proceed
+        if (firstNameEntered && lastNameEntered && zipEntered && numberEntered && birthEntered) {
 
             // A save can now happen
             mSaveHasBeenPushed = true;
@@ -345,7 +311,7 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
                 }
             }
         } else {
-            //  If all the 3 fields name, quantity, and price do not have something and a save is attempted, show unsaved dialog
+            //  If all the 5 fields first name, last name, zip, number, and birth do not have something and a save is attempted, show unsaved dialog
             DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -365,10 +331,12 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
 
         String[] projection = {
                 PeopleStoreEntry._ID,
-                PeopleStoreEntry.COLUMN_PRODUCT_NAME,
-                PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY,
-                PeopleStoreEntry.COLUMN_PRODUCT_PRICE,
-                PeopleStoreEntry.COLUMN_PRODUCT_IMAGE
+                PeopleStoreEntry.COLUMN_FIRST_NAME,
+                PeopleStoreEntry.COLUMN_LAST_NAME,
+                PeopleStoreEntry.COLUMN_ZIP,
+                PeopleStoreEntry.COLUMN_PHONE_NUMBER,
+                PeopleStoreEntry.COLUMN_BIRTH,
+                PeopleStoreEntry.COLUMN_CONTACT_IMAGE
         };
 
         return new CursorLoader(this,
@@ -388,15 +356,19 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
 
         if (cursor.moveToFirst()) {
             // Find columns with item attributes
-            int nameColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_NAME);
-            int quantityColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_QUANTITY);
-            int priceColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_PRICE);
-            int imageColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PRODUCT_IMAGE);
+            int firstNameColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_FIRST_NAME);
+            int lastNameColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_LAST_NAME);
+            int zipColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_ZIP);
+            int numberColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_PHONE_NUMBER);
+            int birthColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_BIRTH);
+            int imageColumnIndex = cursor.getColumnIndex(PeopleStoreEntry.COLUMN_CONTACT_IMAGE);
 
             // Get the values from the cursor
-            String name = cursor.getString(nameColumnIndex);
-            int quantity = cursor.getInt(quantityColumnIndex);
-            double price = cursor.getDouble(priceColumnIndex);
+            String firstName = cursor.getString(firstNameColumnIndex);
+            String lastName = cursor.getString(lastNameColumnIndex);
+            int zip = cursor.getInt(zipColumnIndex);
+            String number = cursor.getString(numberColumnIndex);
+            String birth = cursor.getString(birthColumnIndex);
             String image = cursor.getString(imageColumnIndex);
 
             if (image != null) {
@@ -405,9 +377,11 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
             }
 
             // Update UI
-            mNameEditText.setText(name);
-            mQuantityEditText.setText(String.valueOf(quantity));
-            mPriceEditText.setText(String.valueOf(price));
+            mFirstNameEditText.setText(firstName);
+            mLastNameEditText.setText(lastName);
+            mZipEditText.setText(String.valueOf(zip));
+            mNumberEditText.setText(number);
+            mBirthEditText.setText(String.valueOf(birth));
 
         }
     }
@@ -415,9 +389,11 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         // Let's clear the loader if it's invalidated
-        mNameEditText.setText("");
-        mQuantityEditText.setText("");
-        mPriceEditText.setText("");
+        mFirstNameEditText.setText("");
+        mLastNameEditText.setText("");
+        mZipEditText.setText("");
+        mNumberEditText.setText("");
+        mBirthEditText.setText("");
         mCurrentPhotoPath = "";
     }
 
@@ -457,18 +433,6 @@ public class PeopleStoreDetailActivity extends AppCompatActivity implements Load
             showUnsavedChangesDialog(discardButtonClickListener);
         } else {
             super.onBackPressed();
-        }
-
-    }
-
-    private void orderMore(String[] addresses, String subject) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setData(Uri.parse("mailto:"));
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(Intent.createChooser(intent, "Send email"));
         }
 
     }
